@@ -1,0 +1,4 @@
+# cargo output
+/target
+# trunk output
+/dist

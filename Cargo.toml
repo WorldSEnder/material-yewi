@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "truss-draw-webview",
+    "yew-generator",
+]

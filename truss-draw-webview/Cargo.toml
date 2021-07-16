@@ -1,0 +1,10 @@
+[package]
+name = "truss-draw"
+version = "0.1.0"
+authors = ["Martin Molzer <ga65guy@mytum.de>"]
+edition = "2018"
+
+
+[dependencies]
+yew = { version = "0.18", path = "../../src/yew/packages/yew" }
+yew-generator = { path = "../yew-generator" }
