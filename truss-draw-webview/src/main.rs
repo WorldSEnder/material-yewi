@@ -1,11 +1,10 @@
 #![feature(generators, min_type_alias_impl_trait)]
 
 use yew::prelude::*;
-use yew_generator::ContextLink;
-use yew_generator::GenerativeComponent;
-use yew_generator::GeneratorProvider;
-use yew_generator::WrapGeneratorComponent;
+use material_yewi::button::Button;
 
+/*
+use yew_generator::{ContextLink, GenerativeComponent, GeneratorProvider, WrapGeneratorComponent};
 pub struct Test;
 impl GeneratorProvider for Test {
     type TProp = ();
@@ -21,6 +20,7 @@ impl GeneratorProvider for Test {
     }
 }
 pub type TestComponent = WrapGeneratorComponent<Test>;
+*/
 
 enum Msg {
     AddOne,
@@ -31,6 +31,7 @@ struct Model {
     // It can be used to send messages to the component
     link: ComponentLink<Self>,
     value: i64,
+    typography: String,
 }
 
 impl Component for Model {
@@ -38,34 +39,36 @@ impl Component for Model {
     type Properties = ();
 
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        Self { link, value: 0 }
+        let typography = css_in_rust::Style::create("typography", r#"
+        & {
+        }
+        "#).expect("style compilation failure").to_string();
+        Self { link, value: 0, typography }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::AddOne => {
                 self.value += 1;
-                // the value has changed so we need to
-                // re-render for it to appear on the page
                 true
             }
         }
     }
 
     fn change(&mut self, _props: Self::Properties) -> ShouldRender {
-        // Should only return "true" if new properties are different to
-        // previously received properties.
-        // This component has no properties so we will always return "false".
         false
     }
 
     fn view(&self) -> Html {
+        let button_html = |i| html! {
+            <Button>
+                {format!("My Button #{:02}", i)}
+            </Button>
+        };
         html! {
-            <div>
-                <button onclick=self.link.callback(|_| Msg::AddOne)>{ "+1" }</button>
-                <p>{ self.value }</p>
-                <TestComponent />
-            </div>
+            <>
+                { for (0..100).map(button_html) }
+            </>
         }
     }
 }

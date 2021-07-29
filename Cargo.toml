@@ -2,4 +2,10 @@
 members = [
     "truss-draw-webview",
     "yew-generator",
+    "yew-styles",
+    "material-yewi",
+    "css-in-rust",
 ]
+
+[patch.crates-io]
+yew = { git = "https://github.com/yewstack/yew.git", rev = "f94487364f6eb1c7862e48f7c82ee4122ae8e845" }

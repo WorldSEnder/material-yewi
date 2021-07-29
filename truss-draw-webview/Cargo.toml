@@ -6,5 +6,8 @@ edition = "2018"
 
 
 [dependencies]
-yew = { version = "0.18", path = "../../src/yew/packages/yew" }
+yew = { version = "^0.18" }
 yew-generator = { path = "../yew-generator" }
+yew-styles = { path = "../yew-styles" }
+css-in-rust = { path = "../css-in-rust", features = ["yew_integration"] }
+material-yewi = { path = "../material-yewi" }
