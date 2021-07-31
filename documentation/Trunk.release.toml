@@ -1,3 +1,4 @@
 [build]
 target = "index.release.html"
 release = true
+dist = "../dist"
