@@ -104,7 +104,7 @@ dependencies = [
 
 [[package]]
 name = "css-in-rust"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "lazy_static",
  "nom",
@@ -1011,7 +1011,6 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 [[package]]
 name = "yew"
 version = "0.18.0"
-source = "git+https://github.com/yewstack/yew.git?rev=f94487364f6eb1c7862e48f7c82ee4122ae8e845#f94487364f6eb1c7862e48f7c82ee4122ae8e845"
 dependencies = [
  "anyhow",
  "anymap",
@@ -1036,7 +1035,6 @@ dependencies = [
 [[package]]
 name = "yew-macro"
 version = "0.18.0"
-source = "git+https://github.com/yewstack/yew.git?rev=f94487364f6eb1c7862e48f7c82ee4122ae8e845#f94487364f6eb1c7862e48f7c82ee4122ae8e845"
 dependencies = [
  "boolinator",
  "lazy_static",

@@ -17,6 +17,6 @@ web-sys = "^0.3.36"
 
 [dependencies]
 yew = "^0.18"
-css-in-rust = { path = "../css-in-rust" }
+css-in-rust = { version = "^0.6.0", path = "../css-in-rust" }
 dependent-map = { git = "https://github.com/WorldSEnder/dependent-map-rs.git" }
 lazy_static = "^1.4.0"

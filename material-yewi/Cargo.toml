@@ -17,5 +17,5 @@ web-sys = "^0.3.36"
 
 [dependencies]
 yew = "^0.18"
-yew-styles = { path = "../yew-styles" }
-css-in-rust = { path = "../css-in-rust", features = ["yew_integration"] }
+yew-styles = { version = "^0.1.0", path = "../yew-styles" }
+css-in-rust = { version = "^0.6.0", path = "../css-in-rust", features = ["yew_integration"] }

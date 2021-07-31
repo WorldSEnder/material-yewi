@@ -7,7 +7,11 @@ members = [
 ]
 
 [patch.crates-io]
-yew = { git = "https://github.com/yewstack/yew.git", rev = "f94487364f6eb1c7862e48f7c82ee4122ae8e845" }
+yew = { path = "yew/packages/yew" }
+css-in-rust = { path = "css-in-rust" }
+
+[patch."https://github.com/yewstack/yew.git"]
+yew = { path = "yew/packages/yew" }
 
 [profile.release]
 lto = true

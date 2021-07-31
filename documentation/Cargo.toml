@@ -6,7 +6,7 @@ edition = "2018"
 
 [dependencies]
 yew = { version = "^0.18" }
-css-in-rust = { path = "../css-in-rust", features = ["yew_integration"] }
-yew-styles = { path = "../yew-styles" }
-material-yewi = { path = "../material-yewi" }
+css-in-rust = { version = "^0.6.0", path = "../css-in-rust", features = ["yew_integration"] }
+yew-styles = { version = "^0.1.0", path = "../yew-styles" }
+material-yewi = { version = "^0.1.0", path = "../material-yewi" }
 gloo = { version = "^0.3" }
