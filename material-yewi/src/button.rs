@@ -54,28 +54,27 @@ struct DefaultStyles {
 
 fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
     let root_inline: Scopes = r#"
-        & {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            box-sizing: border-box;
-            background-color: transparent;
-            outline: 0;
-            border: 0;
-            margin: 0;
-            border-radius: 0;
-            padding: 0;
-            cursor: pointer;
-            user-select: none;
-            vertical-align: middle;
-            text-decoration: none;
-            color: inherit;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        box-sizing: border-box;
+        background-color: transparent;
+        outline: 0;
+        border: 0;
+        margin: 0;
+        border-radius: 0;
+        padding: 0;
+        cursor: pointer;
+        user-select: none;
+        vertical-align: middle;
+        text-decoration: none;
+        color: inherit;
 
-            -webkit-tap-highlight-color:transparent;
-            -moz-appearance:none;
-            -webkit-appearance:none;
-        }
+        -webkit-tap-highlight-color: transparent;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+
         &::-moz-focus-inner {
             border-style: none;
         }
@@ -86,12 +85,10 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
     let typography = theme.typography.button.clone();
     let sizing = format!(
         r#"
-        & {{
-            box-sizing: 'border-box';
-            min-width: 64px;
-            padding: 6px 8px;
-            border-radius: {brdr};
-        }}
+        box-sizing: border-box;
+        min-width: 64px;
+        padding: 6px 8px;
+        border-radius: {brdr};
         "#,
         brdr = theme.shape.border_radius
     )
