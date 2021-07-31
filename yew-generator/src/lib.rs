@@ -1,4 +1,4 @@
-#![feature(generators, generator_trait, never_type, min_type_alias_impl_trait)]
+#![feature(generators, generator_trait, never_type, type_alias_impl_trait)]
 
 use yew::html::AnyScope;
 use pin_cell::PinMut;

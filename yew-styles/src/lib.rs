@@ -1,9 +1,139 @@
+use css_in_rust::style::ast::Scopes;
 use dependent_map::{DebugEntry, DynClone, DynPartialEq, HashableAny};
-use std::hash::Hasher;
+use std::convert::TryInto;
 use std::fmt::Debug;
+use std::hash::Hasher;
+use std::ops::Deref;
+use std::rc::Rc;
 
-#[derive(Default, Clone, Debug, PartialEq)]
-pub struct Theme {
+#[derive(Debug)]
+pub struct Typography {
+    /// Css-scopes applied to button like text elements
+    pub button: Scopes,
+
+    pub body1: Scopes,
+    pub body2: Scopes,
+    pub caption: Scopes,
+    pub h1: Scopes,
+    pub h2: Scopes,
+    pub h3: Scopes,
+    pub h4: Scopes,
+    pub h5: Scopes,
+    pub h6: Scopes,
+    pub overline: Scopes,
+    pub subtitle1: Scopes,
+    pub subtitle2: Scopes,
+}
+
+fn standard_text_css(
+    weight: u32,
+    size: &str,
+    line_height: &str,
+    letter_spacing: &str,
+    additional: &str,
+) -> String {
+    format!(
+        r#"
+        font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+        font-weight: {weight};
+        font-size: {size};
+        line-height: {line_height};
+        letter-spacing: {letter_spacing};
+        {additional}"#,
+        weight = weight,
+        size = size,
+        line_height = line_height,
+        letter_spacing = letter_spacing,
+        additional = additional,
+    )
+}
+
+impl Typography {
+    pub fn pixels_to_rem(&self, pixel: f32) -> String {
+        let html_font_size = 16f32; // TODO: additional coefficients from font choice.
+        format!("{rems:.5}rem", rems = pixel / html_font_size)
+    }
+}
+
+impl Default for Typography {
+    fn default() -> Self {
+        let weight_light = 300u32;
+        let weight_regular = 400u32;
+        let weight_medium = 500u32;
+        let _weight_bold = 700u32;
+
+        let button = standard_text_css(
+            weight_medium,
+            "0.875rem",
+            "1.75",
+            "0.02857em",
+            "text-transform: uppercase;",
+        )
+        .try_into()
+        .expect("unexpected error in css parsing");
+        let h1 = standard_text_css(weight_light, "6rem", "1.167", "-0.01562em", "")
+            .try_into()
+            .expect("unexpected error in css parsing");
+        let h2 = standard_text_css(weight_light, "3.75rem", "1.2", "-0.00833em", "")
+            .try_into()
+            .expect("unexpected error in css parsing");
+        let h3 = standard_text_css(weight_regular, "3rem", "1.167", "0em", "")
+            .try_into()
+            .expect("unexpected error in css parsing");
+        let h4 = standard_text_css(weight_regular, "2.125rem", "1.235", "0.00735em", "")
+            .try_into()
+            .expect("unexpected error in css parsing");
+        let h5 = standard_text_css(weight_regular, "1.5rem", "1.334", "0em", "")
+            .try_into()
+            .expect("unexpected error in css parsing");
+        let h6 = standard_text_css(weight_medium, "1.25rem", "1.6", "0.0075em", "")
+            .try_into()
+            .expect("unexpected error in css parsing");
+        let body1 = standard_text_css(weight_regular, "1rem", "1.5", "0.00938em", "")
+            .try_into()
+            .expect("unexpected error in css parsing");
+        let body2 = standard_text_css(weight_regular, "0.875rem", "1.43", "0.01071em", "")
+            .try_into()
+            .expect("unexpected error in css parsing");
+        let caption = standard_text_css(weight_regular, "0.75rem", "1.66", "0.03333em", "")
+            .try_into()
+            .expect("unexpected error in css parsing");
+        let overline = standard_text_css(
+            weight_regular,
+            "0.75rem",
+            "2.66",
+            "0.08333em",
+            "text-transform: uppercase;",
+        )
+        .try_into()
+        .expect("unexpected error in css parsing");
+        let subtitle1 = standard_text_css(weight_regular, "1rem", "1.75", "0.00938em", "")
+            .try_into()
+            .expect("unexpected error in css parsing");
+        let subtitle2 = standard_text_css(weight_medium, "0.875rem", "1.57", "0.00714em", "")
+            .try_into()
+            .expect("unexpected error in css parsing");
+
+        Typography {
+            button,
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6,
+            body1,
+            body2,
+            caption,
+            overline,
+            subtitle1,
+            subtitle2,
+        }
+    }
+}
+
+#[derive(Default, Debug)]
+pub struct ThemeContents {
     pub shape: Shape,
     pub breakpoints: Breakpoints,
     pub direction: Direction,
@@ -13,7 +143,7 @@ pub struct Theme {
     // transitions?: unknown;
     pub components: Components,
     // mixins?: unknown;
-    // typography?: unknown;
+    pub typography: Typography,
     // zIndex?: unknown;
 }
 
@@ -100,7 +230,7 @@ dependent_map::create_entry_impl!(
 type ComponentMap = dependent_map::Map<
     dependent_map::families::Singleton,
     dependent_map::DefaultHashBuilder,
-    dyn ComponentsMapEntry<dependent_map::DefaultHasher>
+    dyn ComponentsMapEntry<dependent_map::DefaultHasher>,
 >;
 
 #[derive(Clone, Debug)]
@@ -118,7 +248,10 @@ impl Default for Components {
 
 impl Components {
     /// Add an override for a component type by providing default properties.
-    pub fn add_override<C: 'static + PartialEq + Clone + Debug>(&mut self, component_props: C) -> Option<C> {
+    pub fn add_override<C: 'static + PartialEq + Clone + Debug>(
+        &mut self,
+        component_props: C,
+    ) -> Option<C> {
         match self.overrides.insert(component_props) {
             Some(c) => Some(c.some),
             None => None,
@@ -134,8 +267,49 @@ impl Components {
 }
 
 impl PartialEq for Components {
-    fn eq(&self, _rhs: &Components) -> bool {
-        true
+    fn eq(&self, rhs: &Components) -> bool {
+        // TODO: is this comparison too expensive to do?
+        // Keep in mind that Theme wraps the ThemeContents in an Rc and does a pointer-comparison
+        self.overrides == rhs.overrides
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct Theme {
+    inner: Rc<ThemeContents>,
+}
+
+thread_local!(
+    // TODO: use lazy_static! with one global theme instead of a thread_local
+    // version?
+
+    /// Global, read-only, default theme. This is used in contexts where no
+    /// [`ThemeProvider`] has installed a [`Theme`].
+    static DEFAULT_THEME: Theme = {
+        Theme {
+            inner: Rc::new(Default::default()),
+        }
+    };
+);
+
+impl Default for Theme {
+    fn default() -> Self {
+        DEFAULT_THEME.with(|t| t.clone())
+    }
+}
+
+impl Deref for Theme {
+    type Target = ThemeContents;
+
+    fn deref(&self) -> &Self::Target {
+        self.inner.deref()
+    }
+}
+
+impl PartialEq for Theme {
+    fn eq(&self, rhs: &Self) -> bool {
+        // meh, dont bother :)
+        Rc::ptr_eq(&self.inner, &rhs.inner)
     }
 }
 

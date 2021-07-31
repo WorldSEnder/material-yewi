@@ -11,3 +11,4 @@ yew-generator = { path = "../yew-generator" }
 yew-styles = { path = "../yew-styles" }
 css-in-rust = { path = "../css-in-rust", features = ["yew_integration"] }
 material-yewi = { path = "../material-yewi" }
+gloo = { version = "^0.3" }

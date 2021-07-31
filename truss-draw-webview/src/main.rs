@@ -1,7 +1,8 @@
-#![feature(generators, min_type_alias_impl_trait)]
+#![feature(generators, type_alias_impl_trait)]
 
-use yew::prelude::*;
 use material_yewi::button::Button;
+use material_yewi::typography::{Typography, TypographyVariant};
+use yew::prelude::*;
 
 /*
 use yew_generator::{ContextLink, GenerativeComponent, GeneratorProvider, WrapGeneratorComponent};
@@ -22,36 +23,28 @@ impl GeneratorProvider for Test {
 pub type TestComponent = WrapGeneratorComponent<Test>;
 */
 
-enum Msg {
-    AddOne,
-}
-
 struct Model {
     // `ComponentLink` is like a reference to a component.
     // It can be used to send messages to the component
-    link: ComponentLink<Self>,
+    _link: ComponentLink<Self>,
     value: i64,
-    typography: String,
 }
 
 impl Component for Model {
-    type Message = Msg;
+    type Message = ();
     type Properties = ();
 
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        let typography = css_in_rust::Style::create("typography", r#"
-        & {
+        Self {
+            _link: link,
+            value: 0,
         }
-        "#).expect("style compilation failure").to_string();
-        Self { link, value: 0, typography }
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        match msg {
-            Msg::AddOne => {
-                self.value += 1;
-                true
-            }
+    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
+        {
+            self.value += 1;
+            true
         }
     }
 
@@ -60,14 +53,59 @@ impl Component for Model {
     }
 
     fn view(&self) -> Html {
-        let button_html = |i| html! {
-            <Button>
-                {format!("My Button #{:02}", i)}
-            </Button>
-        };
+        let on_button = Callback::from(|_| gloo::console::info!("button pressed"));
         html! {
             <>
-                { for (0..100).map(button_html) }
+                <Button on_pressed={on_button}>
+                    {"My Button"}
+                </Button>
+                <Typography variant={TypographyVariant::H1} gutter_bottom={true}>
+                    {"h1. Heading"}
+                </Typography>
+                <Typography variant={TypographyVariant::H2} gutter_bottom={true}>
+                    {"h2. Heading"}
+                </Typography>
+                <Typography variant={TypographyVariant::H3} gutter_bottom={true}>
+                    {"h3. Heading"}
+                </Typography>
+                <Typography variant={TypographyVariant::H4} gutter_bottom={true}>
+                    {"h4. Heading"}
+                </Typography>
+                <Typography variant={TypographyVariant::H5} gutter_bottom={true}>
+                    {"h5. Heading"}
+                </Typography>
+                <Typography variant={TypographyVariant::H6} gutter_bottom={true}>
+                    {"h6. Heading"}
+                </Typography>
+                <Typography variant={TypographyVariant::Subtitle1} gutter_bottom={true}>
+                    {"subtitle1. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
+                    blanditiis tenetur"}
+                </Typography>
+                <Typography variant={TypographyVariant::Subtitle2} gutter_bottom={true}>
+                    {"subtitle2. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
+                    blanditiis tenetur"}
+                </Typography>
+                <Typography variant={TypographyVariant::Body1} gutter_bottom={true}>
+                    {"body1. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
+                    blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
+                    neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
+                    quasi quidem quibusdam."}
+                </Typography>
+                <Typography variant={TypographyVariant::Body2} gutter_bottom={true}>
+                    {"body2. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
+                    blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
+                    neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
+                    quasi quidem quibusdam."}
+                </Typography>
+                /*<Typography variant="button" display="block" gutter_bottom={true}>
+                    {"button text"}
+                </Typography>
+                <Typography variant="caption" display="block" gutter_bottom={true}>
+                    {"caption text"}
+                </Typography>
+                <Typography variant="overline" display="block" gutter_bottom={true}>
+                    {"overline text"}
+                </Typography>*/
             </>
         }
     }

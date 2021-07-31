@@ -1,6 +1,3 @@
 [submodule "css-in-rust"]
 	path = css-in-rust
 	url = https://github.com/worldsender/css-in-rust
-[submodule "material-yew"]
-	path = material-yew
-	url = https://github.com/hamza1311/material-yew.git
