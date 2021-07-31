@@ -1,10 +1,9 @@
 [workspace]
 members = [
-    "truss-draw-webview",
-    "yew-generator",
+    "css-in-rust",
     "yew-styles",
     "material-yewi",
-    "css-in-rust",
+    "documentation",
 ]
 
 [patch.crates-io]

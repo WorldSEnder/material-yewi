@@ -1,27 +1,6 @@
-#![feature(generators, type_alias_impl_trait)]
-
 use material_yewi::button::Button;
 use material_yewi::typography::{Typography, TypographyVariant};
 use yew::prelude::*;
-
-/*
-use yew_generator::{ContextLink, GenerativeComponent, GeneratorProvider, WrapGeneratorComponent};
-pub struct Test;
-impl GeneratorProvider for Test {
-    type TProp = ();
-    type Gen = impl GenerativeComponent;
-    fn start(_: Self::TProp, _ctx: ContextLink) -> Self::Gen {
-        move || {
-            loop {
-                yield yew::html! {
-                    <div id="test-id" />
-                }
-            }
-        }
-    }
-}
-pub type TestComponent = WrapGeneratorComponent<Test>;
-*/
 
 struct Model {
     // `ComponentLink` is like a reference to a component.

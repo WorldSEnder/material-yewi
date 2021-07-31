@@ -1,14 +1,12 @@
 [package]
-name = "truss-draw"
+name = "material-yewi-documentation"
 version = "0.1.0"
 authors = ["Martin Molzer <ga65guy@mytum.de>"]
 edition = "2018"
 
-
 [dependencies]
 yew = { version = "^0.18" }
-yew-generator = { path = "../yew-generator" }
-yew-styles = { path = "../yew-styles" }
 css-in-rust = { path = "../css-in-rust", features = ["yew_integration"] }
+yew-styles = { path = "../yew-styles" }
 material-yewi = { path = "../material-yewi" }
 gloo = { version = "^0.3" }

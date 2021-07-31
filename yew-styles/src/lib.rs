@@ -223,7 +223,7 @@ impl<H: Hasher, T> ComponentsMapEntry<H> for T where
 }
 dependent_map::create_entry_impl!(
     ComponentsMapEntry<H> where
-        dependent_map::EntryAt<E, A>: Eq + Clone,
+        dependent_map::EntryAt<E, A>: PartialEq + Clone,
         dependent_map::ValueAt<E, A>: Debug,
         dependent_map::KeyAt<E, A>: Debug,
 );
