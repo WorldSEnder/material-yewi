@@ -1,6 +1,5 @@
 [workspace]
 members = [
-    "css-in-rust",
     "yew-styles",
     "material-yewi",
     "documentation",
