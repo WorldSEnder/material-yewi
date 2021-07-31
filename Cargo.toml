@@ -10,8 +10,5 @@ members = [
 yew = { path = "yew/packages/yew" }
 css-in-rust = { path = "css-in-rust" }
 
-[patch."https://github.com/yewstack/yew.git"]
-yew = { path = "yew/packages/yew" }
-
 [profile.release]
 lto = true
