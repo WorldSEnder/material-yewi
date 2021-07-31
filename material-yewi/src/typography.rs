@@ -204,12 +204,26 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
         .map(|c| &c.css_scopes)
         .cloned()
         .unwrap_or_default();
+    let display_block: Scopes = r#"display: block;"#
+        .to_string()
+        .try_into()
+        .expect("unexpected error in css parsing");
+
+    let mut button = display_block.clone();
+    button.append(theme.typography.button.clone());
+
+    let mut caption = display_block.clone();
+    caption.append(theme.typography.caption.clone());
+
+    let mut overline = display_block.clone();
+    overline.append(theme.typography.overline.clone());
+
     DefaultStyles {
         root,
         body1: theme.typography.body1.clone(),
         body2: theme.typography.body2.clone(),
-        caption: theme.typography.caption.clone(),
-        button: theme.typography.button.clone(),
+        caption,
+        button,
         h1: theme.typography.h1.clone(),
         h2: theme.typography.h2.clone(),
         h3: theme.typography.h3.clone(),
@@ -218,7 +232,7 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
         h6: theme.typography.h6.clone(),
         subtitle1: theme.typography.subtitle1.clone(),
         subtitle2: theme.typography.subtitle2.clone(),
-        overline: theme.typography.overline.clone(),
+        overline,
         paragraph,
         screen_reader,
         align_left,

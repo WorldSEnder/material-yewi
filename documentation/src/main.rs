@@ -76,15 +76,15 @@ impl Component for Model {
                     neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
                     quasi quidem quibusdam."}
                 </Typography>
-                /*<Typography variant="button" display="block" gutter_bottom={true}>
+                <Typography variant={TypographyVariant::Button} gutter_bottom={true}>
                     {"button text"}
                 </Typography>
-                <Typography variant="caption" display="block" gutter_bottom={true}>
+                <Typography variant={TypographyVariant::Caption} gutter_bottom={true}>
                     {"caption text"}
                 </Typography>
-                <Typography variant="overline" display="block" gutter_bottom={true}>
+                <Typography variant={TypographyVariant::Overline} gutter_bottom={true}>
                     {"overline text"}
-                </Typography>*/
+                </Typography>
             </>
         }
     }
