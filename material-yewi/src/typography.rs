@@ -1,6 +1,6 @@
 use crate::memo::use_styles;
+use css_in_rust::bindings::yew::use_scopes;
 use css_in_rust::style::ast::Scopes;
-use css_in_rust::Style;
 use std::convert::TryInto;
 use yew::classes;
 use yew::function_component;
@@ -273,7 +273,7 @@ pub fn typography(props: &TypographyProperties) -> Html {
     root_styles.append(align_scopes);
     root_styles.append(styles.root_override.clone());
 
-    let root_style = Style::from_scopes("Mwi-typography-root", root_styles);
+    let root_style = use_scopes("Mwi-typography-root", root_styles);
 
     html! {
         <@{component} class={classes![root_style]}>

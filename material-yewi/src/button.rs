@@ -1,6 +1,6 @@
 use crate::memo::use_styles;
+use css_in_rust::bindings::yew::use_scopes;
 use css_in_rust::style::ast::Scopes;
-use css_in_rust::Style;
 use std::convert::TryInto;
 use yew::classes;
 use yew::function_component;
@@ -132,7 +132,7 @@ pub fn button(props: &ButtonProperties) -> Html {
     root_styles.append(styles.hover.clone());
     root_styles.append(styles.root_override.clone());
 
-    let root_style = Style::from_scopes("Mwi-button-root", root_styles);
+    let root_style = use_scopes("Mwi-button-root", root_styles);
     let onclick = props.on_pressed.reform(ButtonPressedEvent::MousePress);
 
     html! {
