@@ -103,7 +103,7 @@ impl Component for Model {
                     {"Typography"}
                 </Typography>
                 <Typography variant={TypographyVariant::Paragraph}>
-                    {"Below you can find examples showing the "}<pre style="display:inline;">{"Typgraphy"}</pre>{" component."}
+                    {"Below you can find examples showing the "}<pre style="display:inline;">{"Typography"}</pre>{" component."}
                 </Typography>
                 <div style={"width: 100%; max-width: 500px; margin-left: 10px;"}>
                     {typography_example()}
