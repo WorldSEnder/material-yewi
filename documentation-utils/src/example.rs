@@ -64,11 +64,11 @@ pub fn example(props: &ExampleProps) -> Html {
         .try_into()
         .expect("unexpected error in css"),
     );
-    let code_styles = use_scopes(
-        "tab-code",
-        format!(
-            r#"
-        .{class_tab}:checked:nth-of-type(1) ~ &:nth-of-type(1) {{
+    let wrapper_style = use_scopes("tab-wrapper", Default::default());
+
+    let mk_tab_content_active = |i| {
+        format!(r#"
+        .{wrapper} > .{class_tab}:checked:nth-of-type({i}) ~ &:nth-of-type({i}) {{
             position: relative;
             height: auto;
             visibility: initial;
@@ -82,38 +82,19 @@ pub fn example(props: &ExampleProps) -> Html {
                     transform: translateY(0px);
         }}
         "#,
-            class_tab = tab_styles.to_string()
+            class_tab = tab_styles.to_string(),
+            wrapper = wrapper_style.to_string(),
+            i = i,
         )
         .try_into()
-        .expect("unexpected error in css"),
-    );
-    let result_style = use_scopes(
-        "tab-results",
-        format!(
-            r#"
-        .{class_tab}:checked:nth-of-type(2) ~ &:nth-of-type(2) {{
-            position: relative;
-            height: auto;
-            visibility: initial;
-            opacity: 1;
-
-            -webkit-transition: visibility 0s, 0.5s opacity ease-in, 0.8s -webkit-transform ease;
-            transition: visibility 0s, 0.5s opacity ease-in, 0.8s -webkit-transform ease;
-            transition: visibility 0s, 0.5s opacity ease-in, 0.8s transform ease;
-            transition: visibility 0s, 0.5s opacity ease-in, 0.8s transform ease, 0.8s -webkit-transform ease;
-            -webkit-transform: translateY(0px);
-                    transform: translateY(0px);
-        }}
-        "#,
-            class_tab = tab_styles.to_string()
-        )
-        .try_into()
-        .expect("unexpected error in css"),
-    );
+        .expect("unexpected error in css")
+    };
+    let code_styles = use_scopes("tab-code", mk_tab_content_active(1));
+    let result_style = use_scopes("tab-results", mk_tab_content_active(2));
 
     // TODO: should not use direct ids
     ::yew::html! {
-        <>
+        <div class={classes![&wrapper_style]}>
             <input type="radio" id="tab1" name="tabGroup1" class={classes![&tab_styles]} />
             <label for="tab1"><Typography variant={TypographyVariant::Button}>{"Code sample"}</Typography></label>
             <input type="radio" id="tab2" name="tabGroup1" class={classes![&tab_styles]} checked={true} />
@@ -127,6 +108,6 @@ pub fn example(props: &ExampleProps) -> Html {
                     { for props.children.iter() }
                 </Demo>
             </div>
-        </>
+        </div>
     }
 }
