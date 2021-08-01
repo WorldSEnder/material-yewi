@@ -136,7 +136,7 @@ pub fn button(props: &ButtonProperties) -> Html {
     let onclick = props.on_pressed.reform(ButtonPressedEvent::MousePress);
 
     html! {
-        <button class={classes![root_style]} onclick={onclick}>
+        <button class={classes![&root_style]} onclick={onclick}>
             { for props.children.iter() }
         </button>
     }

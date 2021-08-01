@@ -53,10 +53,9 @@ pub fn document_example(example: TokenStream) -> TokenStream {
 
         {
             ::yew::html! {
-                <>
-                    <pre>{#formatted_lit}</pre>
-                    <::material_yewi_documentation_utils::demo::Demo>{#html_ident}</::material_yewi_documentation_utils::demo::Demo>
-                </>
+                <::material_yewi_documentation_utils::example::Example code_sample={#formatted_lit}>
+                    {#html_ident}
+                </::material_yewi_documentation_utils::example::Example>
             }
         }
     };

@@ -90,12 +90,24 @@ impl Component for Model {
 
     fn view(&self) -> Html {
         let on_button = Callback::from(|_| gloo::console::info!("button pressed"));
+
         html! {
             <>
+                <Typography variant={TypographyVariant::H2}>
+                    {"Buttons"}
+                </Typography>
                 <Button on_pressed={on_button}>
                     {"My Button"}
                 </Button>
-                {typography_example()}
+                <Typography variant={TypographyVariant::H2}>
+                    {"Typography"}
+                </Typography>
+                <Typography variant={TypographyVariant::Paragraph}>
+                    {"Below you can find examples showing the "}<pre style="display:inline;">{"Typgraphy"}</pre>{" component."}
+                </Typography>
+                <div style={"width: 100%; max-width: 500px; margin-left: 10px;"}>
+                    {typography_example()}
+                </div>
             </>
         }
     }

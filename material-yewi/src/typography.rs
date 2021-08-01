@@ -276,7 +276,7 @@ pub fn typography(props: &TypographyProperties) -> Html {
     let root_style = use_scopes("Mwi-typography-root", root_styles);
 
     html! {
-        <@{component} class={classes![root_style]}>
+        <@{component} class={classes![&root_style]}>
             { for props.children.iter() }
         </@>
     }
