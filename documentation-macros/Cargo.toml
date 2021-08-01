@@ -11,6 +11,6 @@ proc-macro = true
 [dependencies]
 syn = { version = "^1.0.74" }
 quote = "1.0"
-proc-macro2 = "1.0"
+proc-macro2 = { version = "1.0" }
 # yew = { version = "^0.18" }
 unindent = "^0.1.7"

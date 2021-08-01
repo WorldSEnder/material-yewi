@@ -1,5 +1,7 @@
 extern crate proc_macro;
 use proc_macro::TokenStream;
+use proc_macro2::Ident;
+use proc_macro2::Span;
 use quote::quote;
 use syn::{Error, Lit, LitStr};
 use unindent::unindent;
@@ -44,15 +46,16 @@ pub fn document_example(example: TokenStream) -> TokenStream {
         lit.value().parse().expect("Expected valid rust code");
 
     let formatted_lit = LitStr::new(&unindent(&lit.value()), lit.span());
+    let html_ident = Ident::new("built_documentation_html", Span::mixed_site());
 
     let macro_result = quote! {
-        let _example_html = { #example_clode };
+        let #html_ident: ::yew::Html = { #example_clode };
 
         {
             ::yew::html! {
                 <>
                     <pre>{#formatted_lit}</pre>
-                    <::material_yewi_documentation_utils::demo::Demo>{_example_html}</::material_yewi_documentation_utils::demo::Demo>
+                    <::material_yewi_documentation_utils::demo::Demo>{#html_ident}</::material_yewi_documentation_utils::demo::Demo>
                 </>
             }
         }
