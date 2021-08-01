@@ -3,6 +3,8 @@ members = [
     "yew-styles",
     "material-yewi",
     "documentation",
+    "documentation-macros",
+    "documentation-utils",
 ]
 
 [patch.crates-io]

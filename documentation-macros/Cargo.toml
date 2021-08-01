@@ -1,0 +1,16 @@
+[package]
+name = "material-yewi-documentation-macros"
+version = "0.1.0"
+authors = ["Martin Molzer <ga65guy@mytum.de>"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "^1.0.74" }
+quote = "1.0"
+proc-macro2 = "1.0"
+# yew = { version = "^0.18" }
+unindent = "^0.1.7"
