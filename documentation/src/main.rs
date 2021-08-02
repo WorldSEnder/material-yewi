@@ -3,6 +3,9 @@ use material_yewi::typography::{Typography, TypographyVariant};
 use material_yewi_documentation_macros::document_example;
 use yew::prelude::*;
 
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
 struct Model {
     // `ComponentLink` is like a reference to a component.
     // It can be used to send messages to the component

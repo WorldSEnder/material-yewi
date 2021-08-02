@@ -7,6 +7,9 @@ use std::ops::Deref;
 use std::rc::Rc;
 use yew::use_context;
 
+mod color;
+pub use color::*;
+
 #[derive(Debug)]
 pub struct Typography {
     /// Css-scopes applied to button like text elements
@@ -169,10 +172,42 @@ pub struct Direction {}
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ColorSpec {
-    pub light: String,
-    pub main: String,
-    pub dark: String,
-    pub contrast: String,
+    pub light: CssColor,
+    pub main: CssColor,
+    pub dark: CssColor,
+    pub contrast: CssColor,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct TextColorSpec {
+    pub primary: CssColor,
+    pub secondary: CssColor,
+    pub disabled: CssColor,
+    pub hint: CssColor,
+}
+
+impl Default for TextColorSpec {
+    fn default() -> Self {
+        Self {
+            primary: CssColor::rgba(0, 0, 0, 0.87),
+            secondary: CssColor::rgba(0, 0, 0, 0.54),
+            disabled: CssColor::rgba(0, 0, 0, 0.38),
+            hint: CssColor::rgba(0, 0, 0, 0.38),
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PaletteActions {
+    pub hover_opacity: f32,
+}
+
+impl Default for PaletteActions {
+    fn default() -> Self {
+        Self {
+            hover_opacity: 0.04,
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -181,36 +216,49 @@ pub struct Palette {
     pub secondary: ColorSpec,
     pub error: ColorSpec,
     pub warning: ColorSpec,
+    //
+    pub text: TextColorSpec,
+    //
+    pub actions: PaletteActions,
 }
 
 impl Default for Palette {
     fn default() -> Self {
         Self {
             primary: ColorSpec {
-                light: "#7986cb".to_string(),
-                main: "#3f51b5".to_string(),
-                dark: "#303f9f".to_string(),
-                contrast: "#fff".to_string(),
+                light: "#7986cb".try_into().expect(""),
+                main: "#3f51b5".try_into().expect(""),
+                dark: "#303f9f".try_into().expect(""),
+                contrast: "#fff".try_into().expect(""),
             },
             secondary: ColorSpec {
-                light: "#ff4081".to_string(),
-                main: "#f50057".to_string(),
-                dark: "#c51162".to_string(),
-                contrast: "#fff".to_string(),
+                light: "#ff4081".try_into().expect(""),
+                main: "#f50057".try_into().expect(""),
+                dark: "#c51162".try_into().expect(""),
+                contrast: "#fff".try_into().expect(""),
             },
             error: ColorSpec {
-                light: "#e57373".to_string(),
-                main: "#f44336".to_string(),
-                dark: "#d32f2f".to_string(),
-                contrast: "#fff".to_string(),
+                light: "#e57373".try_into().expect(""),
+                main: "#f44336".try_into().expect(""),
+                dark: "#d32f2f".try_into().expect(""),
+                contrast: "#fff".try_into().expect(""),
             },
             warning: ColorSpec {
-                light: "#ffb74d".to_string(),
-                main: "#ff9800".to_string(),
-                dark: "#f57c00".to_string(),
-                contrast: "rgba(0, 0, 0, 0.87)".to_string(),
+                light: "#ffb74d".try_into().expect(""),
+                main: "#ff9800".try_into().expect(""),
+                dark: "#f57c00".try_into().expect(""),
+                contrast: CssColor::rgba(0, 0, 0, 0.87),
             },
+            text: Default::default(),
+            actions: Default::default(),
         }
+    }
+}
+
+impl Palette {
+    pub fn contrast_text_color(&self, _background: CssColor) -> CssColor {
+        // FIXME: return light color for dark background
+        self.text.primary
     }
 }
 

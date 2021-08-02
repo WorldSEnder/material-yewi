@@ -12,4 +12,9 @@ yew = { path = "yew/packages/yew" }
 css-in-rust = { path = "css-in-rust" }
 
 [profile.release]
+# less code to include into binary
+panic = 'abort' 
+# optimization over all codebase ( better optimization, slower build )
+codegen-units = 1 
+# link time optimization using using whole-program analysis
 lto = true

@@ -6,6 +6,7 @@ edition = "2018"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
+wee_alloc = "*"
 yew = { version = "^0.18" }
 css-in-rust = { version = "^0.6.0", path = "../css-in-rust", features = ["yew_integration"] }
 yew-styles = { version = "^0.1.0", path = "../yew-styles" }
