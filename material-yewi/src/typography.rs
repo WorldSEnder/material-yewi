@@ -1,4 +1,3 @@
-use crate::memo::use_styles;
 use css_in_rust::bindings::yew::use_scopes;
 use css_in_rust::style::ast::Scopes;
 use std::convert::TryInto;
@@ -7,6 +6,7 @@ use yew::function_component;
 use yew::html;
 use yew::Children;
 use yew::Properties;
+use yew_styles::use_theme;
 use yew_styles::Theme;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -247,7 +247,7 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
 
 #[function_component(Typography)]
 pub fn typography(props: &TypographyProperties) -> Html {
-    let styles = use_styles(derive_styles_from_theme);
+    let styles = use_theme(derive_styles_from_theme);
 
     let component = variant_to_element(props.variant);
     let root_scopes = styles.root.clone();

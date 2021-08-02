@@ -1,4 +1,3 @@
-use crate::memo::use_styles;
 use css_in_rust::bindings::yew::use_scopes;
 use css_in_rust::style::ast::Scopes;
 use std::convert::TryInto;
@@ -11,6 +10,7 @@ use yew::Children;
 use yew::KeyboardEvent;
 use yew::MouseEvent;
 use yew::Properties;
+use yew_styles::use_theme;
 use yew_styles::Theme;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -123,7 +123,7 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
 
 #[function_component(Button)]
 pub fn button(props: &ButtonProperties) -> Html {
-    let styles = use_styles(derive_styles_from_theme);
+    let styles = use_theme(derive_styles_from_theme);
 
     let mut root_styles = Scopes::default();
     root_styles.append(styles.root_inline.clone());
