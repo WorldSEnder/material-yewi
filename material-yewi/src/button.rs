@@ -127,6 +127,10 @@ struct DefaultStyles {
 }
 
 fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
+    // FIXME: push into theme
+    let disabled_color = "rgba(0, 0, 0, 0.26)".to_string();
+    let disabled_background_color = "rgba(0, 0, 0, 0.12)".to_string();
+
     let root_base: Scopes = r#"
         display: inline-flex;
         align-items: center;
@@ -161,10 +165,14 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
     .to_string()
     .try_into()
     .expect("error in css parsing");
-    let disabled_root_base: Scopes = r#"
+    let disabled_root_base: Scopes = format!(
+        r#"
         pointer-events: none;
         cursor: default;
-        "#
+        color: {c_dis};
+        "#,
+        c_dis = disabled_color,
+    )
     .to_string()
     .try_into()
     .expect("error in css parsing");
@@ -258,10 +266,6 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
     )
     .try_into()
     .expect("error in css parsing");
-
-    // FIXME: push into theme
-    let disabled_color = "rgba(0, 0, 0, 0.26)".to_string();
-    let disabled_background_color = "rgba(0, 0, 0, 0.12)".to_string();
 
     let disabled_outlined: Scopes = format!(
         r#"border: 1px solid {c_dis};"#,

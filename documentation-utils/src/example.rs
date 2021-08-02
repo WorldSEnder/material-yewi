@@ -1,4 +1,5 @@
 use crate::demo::Demo;
+use css_in_rust::bindings::yew::gen_unique_name;
 use css_in_rust::bindings::yew::use_scopes;
 use material_yewi::typography::{Typography, TypographyVariant};
 use std::convert::TryInto;
@@ -49,7 +50,6 @@ pub fn example(props: &ExampleProps) -> Html {
         "tab-content",
         r#"
         background-color: transparent;
-        z-index: -1;
         left: 0;
         -webkit-transform: translateY(-3px);
                 transform: translateY(-3px);
@@ -92,13 +92,16 @@ pub fn example(props: &ExampleProps) -> Html {
     let code_styles = use_scopes("tab-code", mk_tab_content_active(1));
     let result_style = use_scopes("tab-results", mk_tab_content_active(2));
 
-    // TODO: should not use direct ids
+    let tabgroup_id = &*use_state(|| gen_unique_name("code-example"));
+    let code_id = &*use_state(|| gen_unique_name("code-sample"));
+    let results_id = &*use_state(|| gen_unique_name("code-results"));
+
     ::yew::html! {
         <div class={classes![&wrapper_style]}>
-            <input type="radio" id="tab1" name="tabGroup1" class={classes![&tab_styles]} />
-            <label for="tab1"><Typography variant={TypographyVariant::Button}>{"Code sample"}</Typography></label>
-            <input type="radio" id="tab2" name="tabGroup1" class={classes![&tab_styles]} checked={true} />
-            <label for="tab2"><Typography variant={TypographyVariant::Button}>{"Results"}</Typography></label>
+            <input type="radio" id={code_id.clone()} name={tabgroup_id.clone()} class={classes![&tab_styles]} />
+            <label for={code_id.clone()}><Typography variant={TypographyVariant::Button}>{"Code sample"}</Typography></label>
+            <input type="radio" id={results_id.clone()} name={tabgroup_id.clone()} class={classes![&tab_styles]} checked={true} />
+            <label for={results_id.clone()}><Typography variant={TypographyVariant::Button}>{"Results"}</Typography></label>
 
             <div class={classes![&tab_content_style, &code_styles]}>
                 <pre>{props.code_sample.clone()}</pre>
