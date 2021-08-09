@@ -13,7 +13,7 @@ impl CssColor {
     /// Convert an rgb color spec, given in components in the range [0-255]
     ///
     /// ```
-    /// # use yew_styles::CssColor;
+    /// # use material_styles_yew::CssColor;
     /// let c = CssColor::rgb(192, 192, 192);
     /// assert_eq!(c.to_css_value(), "rgb(75.294%, 75.294%, 75.294%)")
     /// ```
@@ -30,7 +30,7 @@ impl CssColor {
     /// in the usual range [0, 1]
     ///
     /// ```
-    /// # use yew_styles::CssColor;
+    /// # use material_styles_yew::CssColor;
     /// let c = CssColor::rgba(192, 192, 192, 0.5);
     /// assert_eq!(c.to_css_value(), "rgba(75.294%, 75.294%, 75.294%, 0.50000)")
     /// ```
@@ -47,7 +47,7 @@ impl CssColor {
     /// in the usual range [0, 1]
     ///
     /// ```
-    /// # use yew_styles::CssColor;
+    /// # use material_styles_yew::CssColor;
     /// let c = CssColor::rgba_f(0.3, 0.2, 0.1, 0.5);
     /// assert_eq!(c.to_css_value(), "rgba(30.000%, 20.000%, 10.000%, 0.50000)")
     /// ```
@@ -78,7 +78,7 @@ impl CssColor {
     /// The saturation and lightness are clamped to the range [0, 1].
     ///
     /// ```
-    /// # use yew_styles::CssColor;
+    /// # use material_styles_yew::CssColor;
     /// let c = CssColor::hsl(120.0, 1.0, 0.8);
     /// assert_eq!(c.to_css_value(), "hsl(120.00, 100.000%, 80.000%)")
     /// ```
@@ -90,7 +90,7 @@ impl CssColor {
     /// The given saturation, lightness and alpha values are clamped to the range [0, 1].
     ///
     /// ```
-    /// # use yew_styles::CssColor;
+    /// # use material_styles_yew::CssColor;
     /// let c = CssColor::hsla(120.0, 1.0, 0.8, 0.5);
     /// assert_eq!(c.to_css_value(), "hsla(120.00, 100.000%, 80.000%, 0.50000)")
     /// ```
@@ -178,7 +178,7 @@ impl CssColor {
 ///
 /// ```
 /// # use std::convert::TryFrom;
-/// # use yew_styles::CssColor;
+/// # use material_styles_yew::CssColor;
 /// assert_eq!(CssColor::try_from("#fff")?, CssColor::rgb(0xff, 0xff, 0xff));
 /// # Ok::<(), String>(())
 /// ```

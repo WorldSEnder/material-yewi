@@ -490,16 +490,30 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7ffc5c5338469d4d3ea17d269fa8ea3512ad247247c30bd2df69e68309ed0a08"
 
 [[package]]
-name = "material-yewi"
+name = "material-styles-yew"
 version = "0.1.0"
 dependencies = [
  "css-in-rust",
+ "dependent-map",
+ "lazy_static",
  "log",
  "wasm-bindgen-test",
  "wasm-logger",
  "web-sys",
  "yew",
- "yew-styles",
+]
+
+[[package]]
+name = "material-yewi"
+version = "0.1.0"
+dependencies = [
+ "css-in-rust",
+ "log",
+ "material-styles-yew",
+ "wasm-bindgen-test",
+ "wasm-logger",
+ "web-sys",
+ "yew",
 ]
 
 [[package]]
@@ -508,12 +522,12 @@ version = "0.1.0"
 dependencies = [
  "css-in-rust",
  "gloo 0.3.0",
+ "material-styles-yew",
  "material-yewi",
  "material-yewi-documentation-macros",
  "material-yewi-documentation-utils",
  "wee_alloc",
  "yew",
- "yew-styles",
 ]
 
 [[package]]
@@ -531,9 +545,9 @@ name = "material-yewi-documentation-utils"
 version = "0.1.0"
 dependencies = [
  "css-in-rust",
+ "material-styles-yew",
  "material-yewi",
  "yew",
- "yew-styles",
 ]
 
 [[package]]
@@ -1088,18 +1102,4 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "yew-styles"
-version = "0.1.0"
-dependencies = [
- "css-in-rust",
- "dependent-map",
- "lazy_static",
- "log",
- "wasm-bindgen-test",
- "wasm-logger",
- "web-sys",
- "yew",
 ]

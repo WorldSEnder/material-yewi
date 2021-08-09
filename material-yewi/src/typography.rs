@@ -1,13 +1,13 @@
 use css_in_rust::bindings::yew::use_scopes;
 use css_in_rust::style::ast::Scopes;
+use material_styles_yew::use_theme;
+use material_styles_yew::Theme;
 use std::convert::TryInto;
 use yew::classes;
 use yew::function_component;
 use yew::html;
 use yew::Children;
 use yew::Properties;
-use yew_styles::use_theme;
-use yew_styles::Theme;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypographyStyleRoot {

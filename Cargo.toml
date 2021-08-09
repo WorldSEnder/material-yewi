@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "yew-styles",
+    "material-styles-yew",
     "material-yewi",
     "documentation",
     "documentation-macros",

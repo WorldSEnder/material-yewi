@@ -1,5 +1,5 @@
 [package]
-name = "yew-styles"
+name = "material-styles-yew"
 version = "0.1.0"
 authors = ["WorldSEnder <worldsbegin@gmx.de>"]
 edition = "2018"
