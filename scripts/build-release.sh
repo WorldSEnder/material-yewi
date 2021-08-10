@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 pushd . > /dev/null
 SCRIPT_PATH="${BASH_SOURCE[0]}"
 if ([ -h "${SCRIPT_PATH}" ]); then
@@ -11,3 +13,12 @@ popd  > /dev/null
 
 . "$SCRIPT_PATH/switch-to-repo-main.sh"
 trunk --config documentation/Trunk.release.toml build --release --public-url /material-yewi
+
+# Print quick overview of the expected sizes
+ls -AshS1F dist
+#  -A: all except . and ..
+#  -s: print sizes
+#  -h: human readable sizes
+#  -S: sort by size descending
+#  -1: single column
+#  -F: classify file type

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 pushd . > /dev/null
 SCRIPT_PATH="${BASH_SOURCE[0]}"
