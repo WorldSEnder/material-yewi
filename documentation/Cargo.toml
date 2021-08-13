@@ -8,6 +8,7 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 wee_alloc = "*"
 yew = { version = "^0.18" }
+yew-router = { version = "^0.15" }
 css-in-rust = { version = "^0.6.0", path = "../css-in-rust", features = ["yew_integration"] }
 material-styles-yew = { version = "^0.1.0", path = "../material-styles-yew" }
 material-yewi = { version = "^0.1.0", path = "../material-yewi" }

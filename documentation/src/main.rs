@@ -4,9 +4,26 @@ use material_yewi::typography::{Typography, TypographyVariant};
 use material_yewi_documentation_macros::document_example;
 use std::convert::TryInto;
 use yew::prelude::*;
+use yew_router::{components::Link, Routable, Router};
 
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
+#[derive(PartialEq, Clone, Routable)]
+enum DocRoute {
+    #[at("/")]
+    Home,
+    #[at("/buttons")]
+    Buttons,
+    #[at("/typography")]
+    Typography,
+    #[not_found]
+    #[at("/404")]
+    NotFound,
+}
+
+type DocRouter = Router<DocRoute>;
+type DocLink = Link<DocRoute>;
 
 fn button_example() -> Html {
     #[derive(Clone, PartialEq, Properties)]
@@ -56,6 +73,30 @@ fn button_example() -> Html {
         </ButtonRow>
     }
     "##}
+}
+
+#[function_component(ButtonDoc)]
+fn button_doc() -> Html {
+    let button_row = use_scopes(
+        "button-row",
+        r##"
+        width: 100%;
+        margin-left: 10px;
+        "##
+        .to_string()
+        .try_into()
+        .unwrap(),
+    );
+    html! {
+        <>
+            <Typography variant={TypographyVariant::H2}>
+                {"Buttons"}
+            </Typography>
+            <div class={classes![&button_row]}>
+                {button_example()}
+            </div>
+        </>
+    }
 }
 
 fn typography_example() -> Html {
@@ -131,18 +172,8 @@ fn typography_example() -> Html {
     "##}
 }
 
-#[function_component(Docs)]
-fn documentation() -> Html {
-    let button_row = use_scopes(
-        "button-row",
-        r##"
-        width: 100%;
-        margin-left: 10px;
-        "##
-        .to_string()
-        .try_into()
-        .unwrap(),
-    );
+#[function_component(TypographyDoc)]
+fn typography_doc() -> Html {
     let typography_row = use_scopes(
         "button-row",
         r##"
@@ -157,12 +188,6 @@ fn documentation() -> Html {
     html! {
         <>
             <Typography variant={TypographyVariant::H2}>
-                {"Buttons"}
-            </Typography>
-            <div class={classes![&button_row]}>
-                {button_example()}
-            </div>
-            <Typography variant={TypographyVariant::H2}>
                 {"Typography"}
             </Typography>
             <Typography variant={TypographyVariant::Paragraph}>
@@ -171,6 +196,61 @@ fn documentation() -> Html {
             <div class={classes![&typography_row]}>
                 {typography_example()}
             </div>
+        </>
+    }
+}
+
+#[function_component(Home)]
+fn home() -> Html {
+    html! {
+        <>
+            <Typography variant={TypographyVariant::Button}>
+                <DocLink route={DocRoute::Buttons}>{"Buttons"}</DocLink>
+            </Typography>
+            <Typography variant={TypographyVariant::Button}>
+                <DocLink route={DocRoute::Typography}>{"Typography"}</DocLink>
+            </Typography>
+        </>
+    }
+}
+
+#[function_component(NotFound)]
+fn not_found() -> Html {
+    html! {
+        <>
+            <Typography variant={TypographyVariant::Body2}>{"The page you were searching for could not be found."}</Typography>
+            <Typography variant={TypographyVariant::Button}>
+                <DocLink route={DocRoute::Home}>{"Back to home page"}</DocLink>
+            </Typography>
+        </>
+    }
+}
+
+#[function_component(Docs)]
+fn documentation() -> Html {
+    let page_header = || {
+        let title = "Material Yewi";
+        let caption = "Beautifully style components in Yew";
+        html! {
+            <>
+                <Typography variant={TypographyVariant::H1}>{title}</Typography>
+                <Typography variant={TypographyVariant::Caption}>{caption}</Typography>
+            </>
+        }
+    };
+
+    fn switch(route: &DocRoute) -> Html {
+        match route {
+            DocRoute::Home => html! { <Home /> },
+            DocRoute::Buttons => html! { <ButtonDoc /> },
+            DocRoute::Typography => html! { <TypographyDoc /> },
+            DocRoute::NotFound => html! { <NotFound /> },
+        }
+    }
+    html! {
+        <>
+            {page_header()}
+            <DocRouter render={Router::render(switch)} />
         </>
     }
 }

@@ -9,6 +9,7 @@ members = [
 
 [patch.crates-io]
 yew = { path = "yew/packages/yew" }
+yew-router = { path = "yew/packages/yew-router" }
 css-in-rust = { path = "css-in-rust" }
 
 [profile.release]
