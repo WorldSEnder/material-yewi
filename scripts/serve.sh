@@ -10,7 +10,6 @@ fi
 cd `dirname ${SCRIPT_PATH}` > /dev/null
 SCRIPT_PATH=`pwd`;
 popd  > /dev/null
-
 . "$SCRIPT_PATH/switch-to-repo-main.sh"
 
 trunk --config documentation/Trunk.toml serve

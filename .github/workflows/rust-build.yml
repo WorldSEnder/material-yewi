@@ -76,6 +76,8 @@ jobs:
 
       - name: Build release
         run: ./scripts/build-release.sh
+        env:
+          TRUNK_BUILD_PUBLIC_URL: "/material-yewi/"
 
       - name: Deploy
         uses: s0/git-publish-subdir-action@v2.4.0
