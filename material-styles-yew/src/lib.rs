@@ -1,10 +1,10 @@
-use css_in_rust::style::ast::Scopes;
 use dependent_map::{DebugEntry, DynClone, DynPartialEq, HashableAny};
 use std::convert::TryInto;
 use std::fmt::Debug;
 use std::hash::Hasher;
 use std::ops::Deref;
 use std::rc::Rc;
+use stylist::ast::Sheet;
 use yew::use_context;
 
 mod color;
@@ -13,42 +13,40 @@ pub use color::*;
 #[derive(Debug)]
 pub struct Typography {
     /// Css-scopes applied to button like text elements
-    pub button: Scopes,
+    pub button: Sheet,
 
-    pub body1: Scopes,
-    pub body2: Scopes,
-    pub caption: Scopes,
-    pub h1: Scopes,
-    pub h2: Scopes,
-    pub h3: Scopes,
-    pub h4: Scopes,
-    pub h5: Scopes,
-    pub h6: Scopes,
-    pub overline: Scopes,
-    pub subtitle1: Scopes,
-    pub subtitle2: Scopes,
+    pub body1: Sheet,
+    pub body2: Sheet,
+    pub caption: Sheet,
+    pub h1: Sheet,
+    pub h2: Sheet,
+    pub h3: Sheet,
+    pub h4: Sheet,
+    pub h5: Sheet,
+    pub h6: Sheet,
+    pub overline: Sheet,
+    pub subtitle1: Sheet,
+    pub subtitle2: Sheet,
 }
 
-fn standard_text_css(
-    weight: u32,
-    size: &str,
-    line_height: &str,
-    letter_spacing: &str,
-    additional: &str,
-) -> String {
-    format!(
-        r#"
+fn standard_text_css(weight: u32, size: &str, line_height: &str, letter_spacing: &str) -> Sheet {
+    stylist::ast::sheet!(
         font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-        font-weight: {weight};
-        font-size: {size};
-        line-height: {line_height};
-        letter-spacing: {letter_spacing};
-        {additional}"#,
-        weight = weight,
-        size = size,
-        line_height = line_height,
-        letter_spacing = letter_spacing,
-        additional = additional,
+        font-weight: ${weight};
+        font-size: ${size};
+        line-height: ${line_height};
+        letter-spacing: ${letter_spacing};
+    )
+}
+
+fn uppercase_text_css(weight: u32, size: &str, line_height: &str, letter_spacing: &str) -> Sheet {
+    stylist::ast::sheet!(
+        font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+        font-weight: ${weight};
+        font-size: ${size};
+        line-height: ${line_height};
+        letter-spacing: ${letter_spacing};
+        text-transform: uppercase;
     )
 }
 
@@ -66,57 +64,19 @@ impl Default for Typography {
         let weight_medium = 500u32;
         let _weight_bold = 700u32;
 
-        let button = standard_text_css(
-            weight_medium,
-            "0.875rem",
-            "1.75",
-            "0.02857em",
-            "text-transform: uppercase;",
-        )
-        .try_into()
-        .expect("unexpected error in css parsing");
-        let h1 = standard_text_css(weight_light, "6rem", "1.167", "-0.01562em", "")
-            .try_into()
-            .expect("unexpected error in css parsing");
-        let h2 = standard_text_css(weight_light, "3.75rem", "1.2", "-0.00833em", "")
-            .try_into()
-            .expect("unexpected error in css parsing");
-        let h3 = standard_text_css(weight_regular, "3rem", "1.167", "0em", "")
-            .try_into()
-            .expect("unexpected error in css parsing");
-        let h4 = standard_text_css(weight_regular, "2.125rem", "1.235", "0.00735em", "")
-            .try_into()
-            .expect("unexpected error in css parsing");
-        let h5 = standard_text_css(weight_regular, "1.5rem", "1.334", "0em", "")
-            .try_into()
-            .expect("unexpected error in css parsing");
-        let h6 = standard_text_css(weight_medium, "1.25rem", "1.6", "0.0075em", "")
-            .try_into()
-            .expect("unexpected error in css parsing");
-        let body1 = standard_text_css(weight_regular, "1rem", "1.5", "0.00938em", "")
-            .try_into()
-            .expect("unexpected error in css parsing");
-        let body2 = standard_text_css(weight_regular, "0.875rem", "1.43", "0.01071em", "")
-            .try_into()
-            .expect("unexpected error in css parsing");
-        let caption = standard_text_css(weight_regular, "0.75rem", "1.66", "0.03333em", "")
-            .try_into()
-            .expect("unexpected error in css parsing");
-        let overline = standard_text_css(
-            weight_regular,
-            "0.75rem",
-            "2.66",
-            "0.08333em",
-            "text-transform: uppercase;",
-        )
-        .try_into()
-        .expect("unexpected error in css parsing");
-        let subtitle1 = standard_text_css(weight_regular, "1rem", "1.75", "0.00938em", "")
-            .try_into()
-            .expect("unexpected error in css parsing");
-        let subtitle2 = standard_text_css(weight_medium, "0.875rem", "1.57", "0.00714em", "")
-            .try_into()
-            .expect("unexpected error in css parsing");
+        let button = uppercase_text_css(weight_medium, "0.875rem", "1.75", "0.02857em");
+        let h1 = standard_text_css(weight_light, "6rem", "1.167", "-0.01562em");
+        let h2 = standard_text_css(weight_light, "3.75rem", "1.2", "-0.00833em");
+        let h3 = standard_text_css(weight_regular, "3rem", "1.167", "0em");
+        let h4 = standard_text_css(weight_regular, "2.125rem", "1.235", "0.00735em");
+        let h5 = standard_text_css(weight_regular, "1.5rem", "1.334", "0em");
+        let h6 = standard_text_css(weight_medium, "1.25rem", "1.6", "0.0075em");
+        let body1 = standard_text_css(weight_regular, "1rem", "1.5", "0.00938em");
+        let body2 = standard_text_css(weight_regular, "0.875rem", "1.43", "0.01071em");
+        let caption = standard_text_css(weight_regular, "0.75rem", "1.66", "0.03333em");
+        let overline = uppercase_text_css(weight_regular, "0.75rem", "2.66", "0.08333em");
+        let subtitle1 = standard_text_css(weight_regular, "1rem", "1.75", "0.00938em");
+        let subtitle2 = standard_text_css(weight_medium, "0.875rem", "1.57", "0.00714em");
 
         Typography {
             button,
@@ -391,5 +351,5 @@ pub fn use_theme<R: 'static>(
     theme_to_styles: impl 'static + Fn(Theme) -> R,
 ) -> impl Deref<Target = R> {
     let theme = use_context::<Theme>().unwrap_or_default();
-    use_memo(theme.clone(), theme_to_styles)
+    use_memo(theme, theme_to_styles)
 }

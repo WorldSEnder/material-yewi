@@ -12,7 +12,8 @@ SCRIPT_PATH=`pwd`;
 popd  > /dev/null
 
 . "$SCRIPT_PATH/switch-to-repo-main.sh"
-trunk --config documentation/Trunk.release.toml build --release --public-url /material-yewi
+RUSTFLAGS="--remap-path-prefix=$HOME/.cargo=[crates.io] --remap-path-prefix=$(pwd)=[crate-root]" \
+  trunk --config documentation/Trunk.release.toml build --release --public-url /material-yewi
 
 # Print quick overview of the expected sizes
 ls -AshS1F dist

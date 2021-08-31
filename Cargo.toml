@@ -6,11 +6,11 @@ members = [
     "documentation-macros",
     "documentation-utils",
 ]
+resolver = "2"
 
 [patch.crates-io]
 yew = { path = "yew/packages/yew" }
 yew-router = { path = "yew/packages/yew-router" }
-css-in-rust = { path = "css-in-rust" }
 
 [profile.release]
 # less code to include into binary

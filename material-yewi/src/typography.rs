@@ -1,8 +1,7 @@
-use css_in_rust::bindings::yew::use_scopes;
-use css_in_rust::style::ast::Scopes;
 use material_styles_yew::use_theme;
 use material_styles_yew::Theme;
-use std::convert::TryInto;
+use stylist::ast::{sheet, Sheet};
+use stylist::yew::use_sheet;
 use yew::classes;
 use yew::function_component;
 use yew::html;
@@ -11,12 +10,12 @@ use yew::Properties;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypographyStyleRoot {
-    css_scopes: Scopes,
+    css_scopes: Sheet,
 }
 
-impl From<Scopes> for TypographyStyleRoot {
-    fn from(scopes: Scopes) -> Self {
-        Self { css_scopes: scopes }
+impl From<Sheet> for TypographyStyleRoot {
+    fn from(css_scopes: Sheet) -> Self {
+        Self { css_scopes }
     }
 }
 
@@ -95,34 +94,34 @@ pub struct TypographyProperties {
 
 #[derive(Default)]
 struct DefaultStyles {
-    root: Scopes,          // Always applied to the root element
-    paragraph: Scopes,     // Applied if variant = Paragraph
-    body1: Scopes,         // Applied if variant = Body1
-    body2: Scopes,         // Applied if variant = Body2
-    caption: Scopes,       // Applied if variant = Caption
-    h1: Scopes,            // Applied if variant = H1
-    h2: Scopes,            // Applied if variant = H2
-    h3: Scopes,            // Applied if variant = H3
-    h4: Scopes,            // Applied if variant = H4
-    h5: Scopes,            // Applied if variant = H5
-    h6: Scopes,            // Applied if variant = H6
-    overline: Scopes,      // Applied if variant = Overline
-    subtitle1: Scopes,     // Applied if variant = Subtitle1
-    subtitle2: Scopes,     // Applied if variant = Subtitle2
-    button: Scopes,        // Applied if variant = Button
-    screen_reader: Scopes, // Applied if variant = ScreenReader
-    align_left: Scopes,    // Applied if align = Left
-    align_right: Scopes,   // Applied if align = Right
-    align_center: Scopes,  // Applied if align = Center
-    align_justify: Scopes, // Applied if align = Justify
-    gutter_bottom: Scopes, // Applied if gutter_bottom
-    no_wrap: Scopes,       // Applied if no_wrap
+    root: Sheet,          // Always applied to the root element
+    paragraph: Sheet,     // Applied if variant = Paragraph
+    body1: Sheet,         // Applied if variant = Body1
+    body2: Sheet,         // Applied if variant = Body2
+    caption: Sheet,       // Applied if variant = Caption
+    h1: Sheet,            // Applied if variant = H1
+    h2: Sheet,            // Applied if variant = H2
+    h3: Sheet,            // Applied if variant = H3
+    h4: Sheet,            // Applied if variant = H4
+    h5: Sheet,            // Applied if variant = H5
+    h6: Sheet,            // Applied if variant = H6
+    overline: Sheet,      // Applied if variant = Overline
+    subtitle1: Sheet,     // Applied if variant = Subtitle1
+    subtitle2: Sheet,     // Applied if variant = Subtitle2
+    button: Sheet,        // Applied if variant = Button
+    screen_reader: Sheet, // Applied if variant = ScreenReader
+    align_left: Sheet,    // Applied if align = Left
+    align_right: Sheet,   // Applied if align = Right
+    align_center: Sheet,  // Applied if align = Center
+    align_justify: Sheet, // Applied if align = Justify
+    gutter_bottom: Sheet, // Applied if gutter_bottom
+    no_wrap: Sheet,       // Applied if no_wrap
 
-    root_override: Scopes, // Overrides applied to root element
+    root_override: Sheet, // Overrides applied to root element
 }
 
 impl DefaultStyles {
-    fn variant_scopes(&self, variant: TypographyVariant) -> Scopes {
+    fn variant_scopes(&self, variant: TypographyVariant) -> Sheet {
         use TypographyVariant::*;
         match variant {
             Paragraph => self.paragraph.clone(),
@@ -144,7 +143,7 @@ impl DefaultStyles {
         }
     }
 
-    fn align_scopes(&self, align: TypographyAlign) -> Scopes {
+    fn align_scopes(&self, align: TypographyAlign) -> Sheet {
         use TypographyAlign::*;
         match align {
             Center => self.align_center.clone(),
@@ -157,66 +156,46 @@ impl DefaultStyles {
 }
 
 fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
-    let root = r#"margin: 0;"#.to_string().try_into().expect("unexpected error in css parsing");
-    let screen_reader = r#"
+    let root = sheet!(margin: 0;);
+    let screen_reader = sheet!(
         position: absolute;
         height: 1;
         width: 1;
-        overflow: hidden;"#
-        .to_string()
-        .try_into()
-        .expect("unexpected error in css parsing");
-    let no_wrap = r#"
+        overflow: hidden;
+    );
+    let no_wrap = sheet!(
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        "#
-    .to_string()
-    .try_into()
-    .expect("unexpected error in css parsing");
-    let paragraph = r#"margin-bottom: 0.35em;"#
-        .to_string()
-        .try_into()
-        .expect("unexpected error in css parsing");
-    let gutter_bottom = r#"margin-bottom: 0.35em;"#
-        .to_string()
-        .try_into()
-        .expect("unexpected error in css parsing");
-    let align_left = r#"text-align: left;"#
-        .to_string()
-        .try_into()
-        .expect("unexpected error in css parsing");
-    let align_right = r#"text-align: right;"#
-        .to_string()
-        .try_into()
-        .expect("unexpected error in css parsing");
-    let align_center = r#"text-align: right;"#
-        .to_string()
-        .try_into()
-        .expect("unexpected error in css parsing");
-    let align_justify = r#"text-align: right;"#
-        .to_string()
-        .try_into()
-        .expect("unexpected error in css parsing");
+    );
+    let paragraph = sheet!(margin-bottom: ${"0.35em"};);
+    let gutter_bottom = sheet!(margin-bottom: ${"0.35em"};);
+    let align_left = sheet!(text-align: left;);
+    let align_right = sheet!(text-align: right;);
+    let align_center = sheet!(text-align: right;);
+    let align_justify = sheet!(text-align: right;);
     let root_override = theme
         .components
         .search_override::<TypographyStyleRoot>()
         .map(|c| &c.css_scopes)
         .cloned()
         .unwrap_or_default();
-    let display_block: Scopes = r#"display: block;"#
-        .to_string()
-        .try_into()
-        .expect("unexpected error in css parsing");
+    let display_block = sheet!(display: block;);
 
-    let mut button = display_block.clone();
-    button.append(theme.typography.button.clone());
+    let mut button = vec![];
+    button.extend_from_slice(&display_block);
+    button.extend_from_slice(&theme.typography.button);
+    let button = Sheet::from(button);
 
-    let mut caption = display_block.clone();
-    caption.append(theme.typography.caption.clone());
+    let mut caption = vec![];
+    caption.extend_from_slice(&display_block);
+    caption.extend_from_slice(&theme.typography.caption);
+    let caption = Sheet::from(caption);
 
-    let mut overline = display_block.clone();
-    overline.append(theme.typography.overline.clone());
+    let mut overline = vec![];
+    overline.extend_from_slice(&display_block);
+    overline.extend_from_slice(&theme.typography.overline);
+    let overline = Sheet::from(overline);
 
     DefaultStyles {
         root,
@@ -250,33 +229,34 @@ pub fn typography(props: &TypographyProperties) -> Html {
     let styles = use_theme(derive_styles_from_theme);
 
     let component = variant_to_element(props.variant);
-    let root_scopes = styles.root.clone();
-    let variant_scopes = styles.variant_scopes(props.variant);
-    let gutter_scopes = if props.gutter_bottom {
+    let root_sheet = styles.root.clone();
+    let variant_sheet = styles.variant_scopes(props.variant);
+    let gutter_sheet = if props.gutter_bottom {
         styles.gutter_bottom.clone()
     } else {
         Default::default()
     };
-    let no_wrap_scopes = if props.no_wrap {
+    let no_wrap_sheet = if props.no_wrap {
         styles.no_wrap.clone()
     } else {
         Default::default()
     };
-    let align_scopes = styles.align_scopes(props.align);
+    let align_sheet = styles.align_scopes(props.align);
 
-    let mut root_styles = Scopes::default();
+    let mut root_styles = vec![];
     // Order matters here! overrides come last
-    root_styles.append(root_scopes);
-    root_styles.append(variant_scopes);
-    root_styles.append(gutter_scopes);
-    root_styles.append(no_wrap_scopes);
-    root_styles.append(align_scopes);
-    root_styles.append(styles.root_override.clone());
+    root_styles.extend_from_slice(&root_sheet);
+    root_styles.extend_from_slice(&variant_sheet);
+    root_styles.extend_from_slice(&gutter_sheet);
+    root_styles.extend_from_slice(&no_wrap_sheet);
+    root_styles.extend_from_slice(&align_sheet);
+    root_styles.extend_from_slice(&styles.root_override);
+    let root_styles = Sheet::from(root_styles);
 
-    let root_style = use_scopes("Mwi-typography-root", root_styles);
+    let root_style = use_sheet("Mwi-typography-root", root_styles);
 
     html! {
-        <@{component} class={classes![&root_style]}>
+        <@{component} class={classes![root_style]}>
             { for props.children.iter() }
         </@>
     }

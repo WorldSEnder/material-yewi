@@ -174,6 +174,12 @@ impl CssColor {
     }
 }
 
+impl std::fmt::Display for CssColor {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        f.write_str(&self.to_css_value())
+    }
+}
+
 /// Try to convert from a hash-bang spec to css color.
 ///
 /// ```

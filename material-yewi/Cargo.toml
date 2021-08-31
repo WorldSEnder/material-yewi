@@ -18,4 +18,10 @@ web-sys = "^0.3.36"
 [dependencies]
 yew = "^0.18"
 material-styles-yew = { version = "^0.1.0", path = "../material-styles-yew" }
-css-in-rust = { version = "^0.6.0", path = "../css-in-rust", features = ["yew_integration"] }
+
+[dependencies.stylist]
+version = "^0.9.0"
+git = "https://github.com/futursolo/stylist-rs.git"
+branch = "yew-next"
+default-features = false
+features = ["macros", "yew_integration"]

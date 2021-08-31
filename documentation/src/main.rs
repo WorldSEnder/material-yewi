@@ -1,8 +1,8 @@
-use css_in_rust::bindings::yew::use_scopes;
 use material_yewi::button::{Button, ButtonColor, ButtonSize, ButtonVariant};
 use material_yewi::typography::{Typography, TypographyVariant};
 use material_yewi_documentation_macros::document_example;
-use std::convert::TryInto;
+use stylist::ast::sheet;
+use stylist::yew::use_sheet;
 use yew::prelude::*;
 use yew_router::{components::Link, Routable, Router};
 
@@ -32,12 +32,11 @@ fn button_example() -> Html {
     }
     #[function_component(ButtonRow)]
     fn button_row(props: &WrapperProps) -> Html {
-        let wrapper_class = use_scopes(
+        let wrapper_class = use_sheet(
             "button-row",
-            "& > button { margin: 8px; }"
-                .to_string()
-                .try_into()
-                .unwrap(),
+            sheet!(
+                & > button { margin: 8px; }
+            ),
         );
         ::yew::html! {
             <div class={classes![&wrapper_class]}>
@@ -77,24 +76,12 @@ fn button_example() -> Html {
 
 #[function_component(ButtonDoc)]
 fn button_doc() -> Html {
-    let button_row = use_scopes(
-        "button-row",
-        r##"
-        width: 100%;
-        margin-left: 10px;
-        "##
-        .to_string()
-        .try_into()
-        .unwrap(),
-    );
     html! {
         <>
             <Typography variant={TypographyVariant::H2}>
                 {"Buttons"}
             </Typography>
-            <div class={classes![&button_row]}>
-                {button_example()}
-            </div>
+            {button_example()}
         </>
     }
 }
@@ -106,9 +93,11 @@ fn typography_example() -> Html {
     }
     #[function_component(TypographyListing)]
     fn typography_listing(props: &WrapperProps) -> Html {
-        let wrapper_class = use_scopes(
+        let wrapper_class = use_sheet(
             "typography-listing",
-            "max-width: 500px;".to_string().try_into().unwrap(),
+            sheet!(
+                max-width: 500px;
+            ),
         );
         ::yew::html! {
             <div class={classes![&wrapper_class]}>
@@ -174,17 +163,6 @@ fn typography_example() -> Html {
 
 #[function_component(TypographyDoc)]
 fn typography_doc() -> Html {
-    let typography_row = use_scopes(
-        "button-row",
-        r##"
-        width: 100%;
-        margin-left: 10px;
-        "##
-        .to_string()
-        .try_into()
-        .unwrap(),
-    );
-
     html! {
         <>
             <Typography variant={TypographyVariant::H2}>
@@ -193,9 +171,7 @@ fn typography_doc() -> Html {
             <Typography variant={TypographyVariant::Paragraph}>
                 {"Below you can find examples showing the "}<pre style="display:inline;">{"Typography"}</pre>{" component."}
             </Typography>
-            <div class={classes![&typography_row]}>
-                {typography_example()}
-            </div>
+            {typography_example()}
         </>
     }
 }
@@ -230,7 +206,7 @@ fn not_found() -> Html {
 fn documentation() -> Html {
     let page_header = || {
         let title = "Material Yewi";
-        let caption = "Beautifully style components in Yew";
+        let caption = "Beautifully styled components in Yew";
         html! {
             <>
                 <Typography variant={TypographyVariant::H1}>{title}</Typography>

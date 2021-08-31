@@ -1,8 +1,9 @@
 use crate::demo::Demo;
-use css_in_rust::bindings::yew::gen_unique_name;
-use css_in_rust::bindings::yew::use_scopes;
-use material_yewi::typography::{Typography, TypographyVariant};
-use std::convert::TryInto;
+use material_yewi::typography::Typography;
+use material_yewi::typography::TypographyVariant;
+use once_cell::sync::Lazy;
+use std::sync::{Arc, Mutex};
+use stylist::{ast::sheet, yew::use_sheet};
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq, Properties)]
@@ -12,101 +13,97 @@ pub struct ExampleProps {
     pub children: Children,
 }
 
+fn get_next_style_id() -> u64 {
+    static CTR: Lazy<Arc<Mutex<u64>>> = Lazy::new(Arc::default);
+    let mut ctr = CTR.lock().expect("Failed to lock Rng.");
+
+    *ctr += 1;
+    *ctr
+}
+
+fn use_unique_name(suggestion: &'static str) -> UseStateHandle<String> {
+    use_state(move || format!("{}-{}", suggestion, get_next_style_id()))
+}
+
 #[function_component(Example)]
 pub fn example(props: &ExampleProps) -> Html {
-    let tab_styles = use_scopes(
+    let tab_styles = use_sheet(
         "tab",
-        r#"
-        & {
-            display: none;
-        }
-        & + label {
-            cursor: pointer;
-            display: inline-block;
-            text-align: center;
+        sheet!(
+            & {
+                display: none;
+            }
+            & + label {
+                cursor: pointer;
+                display: inline-block;
+                text-align: center;
 
-            -webkit-box-flex: 3;
-            -ms-flex-positive: 3;
-                    flex-grow: 3;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-                user-select: none;
-            -webkit-transition: 0.3s background-color ease, 0.3s box-shadow ease;
-            transition: 0.3s background-color ease, 0.3s box-shadow ease;
-            height: 50px;
-            box-sizing: border-box;
-            padding: 15px;
-        }
-        &:checked + label {
-            background-color: #ccc;
-        }"#
-        .to_string()
-        .try_into()
-        .expect("unexpected error in css"),
+                -webkit-box-flex: 3;
+                -ms-flex-positive: 3;
+                        flex-grow: 3;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                    user-select: none;
+                -webkit-transition: 0.3s background-color ease, 0.3s box-shadow ease;
+                transition: 0.3s background-color ease, 0.3s box-shadow ease;
+                height: 50px;
+                box-sizing: border-box;
+                padding: 15px;
+            }
+            &:checked + label {
+                background-color: #ccc;
+            }
+        ),
     );
 
-    let tab_content_style = use_scopes(
+    let tab_content_style = use_sheet(
         "tab-content",
-        r#"
-        background-color: transparent;
-        left: 0;
-        -webkit-transform: translateY(-3px);
-                transform: translateY(-3px);
-        border-radius: 6px;
+        sheet!(
+            background-color: transparent;
+            left: 0;
+            border-radius: 6px;
 
-        position: fixed;
-        height: 0;
-        opacity: 0;
-        visibility: hidden;
-        "#
-        .to_string()
-        .try_into()
-        .expect("unexpected error in css"),
+            position: fixed;
+            height: 0;
+            opacity: 0;
+            visibility: hidden;
+        ),
     );
-    let wrapper_style = use_scopes("tab-wrapper", Default::default());
+    let wrapper_style = use_sheet("tab-wrapper", sheet!());
 
     let mk_tab_content_active = |i| {
-        format!(r#"
-        .{wrapper} > .{class_tab}:checked:nth-of-type({i}) ~ &:nth-of-type({i}) {{
-            position: relative;
-            height: auto;
-            visibility: initial;
-            opacity: 1;
+        sheet!(
+            .${wrapper_style.get_class_name()}
+            > .${tab_styles.get_class_name()}:checked:nth-of-type(${i}) ~ &:nth-of-type(${i}) {
+                position: relative;
+                height: auto;
+                visibility: initial;
+                opacity: 1;
 
-            -webkit-transition: visibility 0s, 0.5s opacity ease-in, 0.8s -webkit-transform ease;
-            transition: visibility 0s, 0.5s opacity ease-in, 0.8s -webkit-transform ease;
-            transition: visibility 0s, 0.5s opacity ease-in, 0.8s transform ease;
-            transition: visibility 0s, 0.5s opacity ease-in, 0.8s transform ease, 0.8s -webkit-transform ease;
-            -webkit-transform: translateY(0px);
-                    transform: translateY(0px);
-        }}
-        "#,
-            class_tab = tab_styles.to_string(),
-            wrapper = wrapper_style.to_string(),
-            i = i,
+                -webkit-transition: visibility 0s, 0.5s opacity ease-in;
+                transition: visibility 0s, 0.5s opacity ease-in;
+            }
         )
-        .try_into()
-        .expect("unexpected error in css")
     };
-    let code_styles = use_scopes("tab-code", mk_tab_content_active(1));
-    let result_style = use_scopes("tab-results", mk_tab_content_active(2));
+    let code_styles = use_sheet("tab-code", mk_tab_content_active(1));
+    let result_style = use_sheet("tab-results", mk_tab_content_active(2));
 
-    let tabgroup_id = &*use_state(|| gen_unique_name("code-example"));
-    let code_id = &*use_state(|| gen_unique_name("code-sample"));
-    let results_id = &*use_state(|| gen_unique_name("code-results"));
+    let code_id = use_unique_name("code-sample");
+    let tabgroup_id = use_unique_name("code-example");
+    let results_id = use_unique_name("code-results");
 
     ::yew::html! {
-        <div class={classes![&wrapper_style]}>
-            <input type="radio" id={code_id.clone()} name={tabgroup_id.clone()} class={classes![&tab_styles]} />
-            <label for={code_id.clone()}><Typography variant={TypographyVariant::Button}>{"Code sample"}</Typography></label>
-            <input type="radio" id={results_id.clone()} name={tabgroup_id.clone()} class={classes![&tab_styles]} checked={true} />
-            <label for={results_id.clone()}><Typography variant={TypographyVariant::Button}>{"Results"}</Typography></label>
+        <div class={classes![wrapper_style]}>
+            <input type="radio" id={code_id.to_string()} name={tabgroup_id.to_string()} class={classes![&tab_styles]} />
+            <label for={code_id.to_string()}><Typography variant={TypographyVariant::Button}>{"Code sample"}</Typography></label>
+            <input type="radio" id={results_id.to_string()} name={tabgroup_id.to_string()} class={classes![tab_styles]} checked={true} />
+            <label for={results_id.to_string()}><Typography variant={TypographyVariant::Button}>{"Results"}</Typography></label>
 
-            <div class={classes![&tab_content_style, &code_styles]}>
+            <div class={classes![&tab_content_style, code_styles]}>
                 <pre>{props.code_sample.clone()}</pre>
             </div>
-            <div class={classes![&tab_content_style, &result_style]}>
+            <div class={classes![&tab_content_style, result_style]}>
                 <Demo>
                     { for props.children.iter() }
                 </Demo>

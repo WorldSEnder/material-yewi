@@ -1,9 +1,9 @@
-use css_in_rust::bindings::yew::use_scopes;
-use css_in_rust::style::ast::Scopes;
 use material_styles_yew::use_theme;
 use material_styles_yew::CssColor;
 use material_styles_yew::Theme;
 use std::convert::TryInto;
+use stylist::ast::{sheet, Sheet};
+use stylist::yew::use_sheet;
 use yew::classes;
 use yew::function_component;
 use yew::html;
@@ -17,11 +17,11 @@ use yew::Properties;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct ButtonStyleRoot {
-    css_scopes: Scopes,
+    css_scopes: Sheet,
 }
 
-impl From<Scopes> for ButtonStyleRoot {
-    fn from(scopes: Scopes) -> Self {
+impl From<Sheet> for ButtonStyleRoot {
+    fn from(scopes: Sheet) -> Self {
         Self { css_scopes: scopes }
     }
 }
@@ -94,36 +94,36 @@ pub struct ButtonProperties {
 struct DefaultStyles {
     // TODO: These styles are originally contained in ButtonBase. When we tear them apart,
     // copy them over.
-    root_base: Scopes,
-    disabled_root_base: Scopes,
+    root_base: Sheet,
+    disabled_root_base: Sheet,
 
-    root_inline: Scopes,
+    root_inline: Sheet,
     // sizing
-    size_text_small: Scopes,
-    size_text_medium: Scopes,
-    size_text_large: Scopes,
-    size_outlined_small: Scopes,
-    size_outlined_medium: Scopes,
-    size_outlined_large: Scopes,
-    size_contained_small: Scopes,
-    size_contained_medium: Scopes,
-    size_contained_large: Scopes,
+    size_text_small: Sheet,
+    size_text_medium: Sheet,
+    size_text_large: Sheet,
+    size_outlined_small: Sheet,
+    size_outlined_medium: Sheet,
+    size_outlined_large: Sheet,
+    size_contained_small: Sheet,
+    size_contained_medium: Sheet,
+    size_contained_large: Sheet,
     // coloring
-    color_text_inherit: Scopes,
-    color_text_primary: Scopes,
-    color_text_secondary: Scopes,
-    color_outlined_inherit: Scopes,
-    color_outlined_primary: Scopes,
-    color_outlined_secondary: Scopes,
-    color_contained_inherit: Scopes,
-    color_contained_primary: Scopes,
-    color_contained_secondary: Scopes,
+    color_text_inherit: Sheet,
+    color_text_primary: Sheet,
+    color_text_secondary: Sheet,
+    color_outlined_inherit: Sheet,
+    color_outlined_primary: Sheet,
+    color_outlined_secondary: Sheet,
+    color_contained_inherit: Sheet,
+    color_contained_primary: Sheet,
+    color_contained_secondary: Sheet,
     // disabled
-    disabled_outlined: Scopes,
-    disabled_contained: Scopes,
-    disabled_outlined_secondary: Scopes,
+    disabled_outlined: Sheet,
+    disabled_contained: Sheet,
+    disabled_outlined_secondary: Sheet,
     // overrides
-    root_override: Scopes,
+    root_override: Sheet,
 }
 
 fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
@@ -131,7 +131,7 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
     let disabled_color = "rgba(0, 0, 0, 0.26)".to_string();
     let disabled_background_color = "rgba(0, 0, 0, 0.12)".to_string();
 
-    let root_base: Scopes = r#"
+    let root_base = sheet!(
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -161,242 +161,145 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
         @media print {
             color-adjust: exact;
         }
-        "#
-    .to_string()
-    .try_into()
-    .expect("error in css parsing");
-    let disabled_root_base: Scopes = format!(
-        r#"
+    );
+    let disabled_root_base = sheet!(
         pointer-events: none;
         cursor: default;
-        color: {c_dis};
-        "#,
-        c_dis = disabled_color,
-    )
-    .to_string()
-    .try_into()
-    .expect("error in css parsing");
-
-    let mut root_inline = Scopes::default();
-    root_inline.append(theme.typography.button.clone());
-    root_inline.append(
-        // FIXME: transition from theme
-        format!(
-            r#"
-            min-width: 64px;
-            border-radius: {brdr};
-            transition:
-                background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
-                box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
-                border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
-                color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-            "#,
-            brdr = theme.shape.border_radius
-        )
-        .try_into()
-        .expect("unexpected css error"),
-    );
-    // hover
-    root_inline.append(
-        r#"&:hover { text-decoration: none; }"#
-            .to_string()
-            .try_into()
-            .expect("error in css parsing"),
+        color: ${&disabled_color};
     );
 
-    let size_text_small: Scopes = format!(
-        r#"
+    // FIXME: transition from theme
+    let root_basebox = sheet!(
+        min-width: 64px;
+        border-radius: ${theme.shape.border_radius.clone()};
+        transition:
+            background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+            box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+            border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+            color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    );
+    let root_hover = sheet!(
+        &:hover { text-decoration: none; }
+    );
+    let mut root_inline = vec![];
+    root_inline.extend_from_slice(&theme.typography.button);
+    root_inline.extend_from_slice(&root_basebox);
+    root_inline.extend_from_slice(&root_hover);
+    let root_inline = Sheet::from(root_inline);
+
+    let size_text_small = sheet!(
         padding: 4px 5px;
-        font-size: {sz};
-        "#,
-        sz = theme.typography.pixels_to_rem(13.0)
-    )
-    .try_into()
-    .expect("error in css parsing");
-    let size_text_medium: Scopes =
-        r#"padding: 6px 8px;"#.to_string().try_into().expect("error in css parsing");
-    let size_text_large: Scopes = format!(
-        r#"
+        font-size: ${theme.typography.pixels_to_rem(13.0)};
+    );
+    let size_text_medium = sheet!(
+        padding: 6px 8px;
+    );
+    let size_text_large = sheet!(
         padding: 8px 11px;
-        font-size: {sz};
-        "#,
-        sz = theme.typography.pixels_to_rem(15.0)
-    )
-    .try_into()
-    .expect("error in css parsing");
+        font-size: ${theme.typography.pixels_to_rem(15.0)};
+    );
 
-    let size_outlined_small: Scopes = format!(
-        r#"
+    let size_outlined_small = sheet!(
         padding: 3px 9px;
-        font-size: {sz};
-        "#,
-        sz = theme.typography.pixels_to_rem(13.0)
-    )
-    .try_into()
-    .expect("error in css parsing");
-    let size_outlined_medium: Scopes =
-        r#"padding: 5px 15px;"#.to_string().try_into().expect("error in css parsing");
-    let size_outlined_large: Scopes = format!(
-        r#"
+        font-size: ${theme.typography.pixels_to_rem(13.0)};
+    );
+    let size_outlined_medium = sheet!(
+        padding: 5px 15px;
+    );
+    let size_outlined_large = sheet!(
         padding: 7px 21px;
-        font-size: {sz};
-        "#,
-        sz = theme.typography.pixels_to_rem(15.0)
-    )
-    .try_into()
-    .expect("error in css parsing");
+        font-size: ${theme.typography.pixels_to_rem(15.0)};
+    );
 
-    let size_contained_small: Scopes = format!(
-        r#"
+    let size_contained_small = sheet!(
         padding: 4px 10px;
-        font-size: {sz};
-        "#,
-        sz = theme.typography.pixels_to_rem(13.0)
-    )
-    .try_into()
-    .expect("error in css parsing");
-    let size_contained_medium: Scopes =
-        r#"padding: 6px 16px;"#.to_string().try_into().expect("error in css parsing");
-    let size_contained_large: Scopes = format!(
-        r#"
+        font-size: ${theme.typography.pixels_to_rem(13.0)};
+    );
+    let size_contained_medium = sheet!(
+        padding: 6px 16px;
+    );
+    let size_contained_large = sheet!(
         padding: 8px 22px;
-        font-size: {sz};
-        "#,
-        sz = theme.typography.pixels_to_rem(15.0)
-    )
-    .try_into()
-    .expect("error in css parsing");
+        font-size: ${theme.typography.pixels_to_rem(15.0)};
+    );
 
-    let disabled_outlined: Scopes = format!(
-        r#"border: 1px solid {c_dis};"#,
-        c_dis = disabled_background_color,
-    )
-    .try_into()
-    .expect("error in css parsing");
+    let disabled_outlined = sheet!(
+        border: 1px solid ${&disabled_background_color};
+    );
 
-    let disabled_outlined_secondary: Scopes =
-        format!(r#"border: 1px solid {c_dis};"#, c_dis = disabled_color,)
-            .try_into()
-            .expect("error in css parsing");
-    let disabled_contained: Scopes = format!(
-        r#"
-        color: {c_dis};
+    let disabled_outlined_secondary = sheet!(
+        border: 1px solid ${&disabled_color};
+    );
+    let disabled_contained = sheet!(
+        color: ${&disabled_color};
         box-shadow: none;
-        background-color: {c_dis_bck};
-        "#,
-        c_dis = disabled_color,
-        c_dis_bck = disabled_background_color,
-    )
-    .try_into()
-    .expect("error in css parsing");
+        background-color: ${&disabled_background_color};
+    );
 
-    let to_hover = |c: CssColor| {
-        c.alpha_multiply(theme.palette.actions.hover_opacity)
-            .to_css_value()
-    };
+    let to_hover = |c: CssColor| c.alpha_multiply(theme.palette.actions.hover_opacity);
     let color_primary = &theme.palette.primary;
     let color_secondary = &theme.palette.secondary;
 
-    let color_text_inherit: Scopes = format!(
-        r#"
+    let color_text_inherit = sheet!(
         color: inherit;
-        &:hover {{
-            background-color: {c_bck};
-        }}
-        @media (hover: none) {{
-            &:hover {{ background-color: transparent; }}
-        }}
-        "#,
-        c_bck = to_hover(theme.palette.text.primary),
-    )
-    .try_into()
-    .expect("error in css parsing");
-    let color_text_primary: Scopes = format!(
-        r#"
-        color: {c_txt};
-        &:hover {{
-            background-color: {c_bck};
-        }}
-        @media (hover: none) {{
-            &:hover {{ background-color: transparent; }}
-        }}
-        "#,
-        c_txt = color_primary.main.to_css_value(),
-        c_bck = to_hover(color_primary.main),
-    )
-    .try_into()
-    .expect("error in css parsing");
-    let color_text_secondary: Scopes = format!(
-        r#"
-        color: {c_txt};
-        &:hover {{
-            background-color: {c_bck};
-        }}
-        @media (hover: none) {{
-            &:hover {{ background-color: transparent; }}
-        }}
-        "#,
-        c_txt = color_secondary.main.to_css_value(),
-        c_bck = to_hover(color_secondary.main),
-    )
-    .try_into()
-    .expect("error in css parsing");
+        &:hover {
+            background-color: ${to_hover(theme.palette.text.primary)};
+        }
+        @media (hover: none) {
+            &:hover { background-color: transparent; }
+        }
+    );
+    let color_text_primary = sheet!(
+        color: ${color_primary.main};
+        &:hover {
+            background-color: ${to_hover(color_primary.main)};
+        }
+        @media (hover: none) {
+            &:hover { background-color: transparent; }
+        }
+    );
+    let color_text_secondary = sheet!(
+        color: ${color_secondary.main};
+        &:hover {
+            background-color: ${to_hover(color_secondary.main)};
+        }
+        @media (hover: none) {
+            &:hover { background-color: transparent; }
+        }
+    );
 
-    let color_outlined_inherit: Scopes = format!(
-        r#"
+    let color_outlined_inherit = sheet!(
         color: inherit;
-        border: 1px solid {c_brd};
-        &:hover {{
-            background-color: {c_bck};
-        }}
-        @media (hover: none) {{
-            &:hover {{ background-color: transparent; }}
-        }}
-        "#,
-        // FIXME: push into theme
-        c_brd = CssColor::rgba(0, 0, 0, 0.32).to_css_value(),
-        c_bck = to_hover(theme.palette.text.primary),
-    )
-    .try_into()
-    .expect("error in css parsing");
-    let color_outlined_primary: Scopes = format!(
-        r#"
-        color: {c_txt};
-        border: 1px solid {c_brd};
-        &:hover {{
-            border: 1px solid {c_brd_hover};
-            background-color: {c_bck};
-        }}
-        @media (hover: none) {{
-            &:hover {{ background-color: transparent; }}
-        }}
-        "#,
-        c_txt = color_primary.main.to_css_value(),
-        c_brd = color_primary.main.alpha_multiply(0.5).to_css_value(),
-        c_brd_hover = color_primary.main.to_css_value(),
-        c_bck = to_hover(color_primary.main),
-    )
-    .try_into()
-    .expect("error in css parsing");
-    let color_outlined_secondary: Scopes = format!(
-        r#"
-        color: {c_txt};
-        border: 1px solid {c_brd};
-        &:hover {{
-            border: 1px solid {c_brd_hover};
-            background-color: {c_bck};
-        }}
-        @media (hover: none) {{
-            &:hover {{ background-color: transparent; }}
-        }}
-        "#,
-        c_txt = color_secondary.main.to_css_value(),
-        c_brd = color_secondary.main.alpha_multiply(0.5).to_css_value(),
-        c_brd_hover = color_secondary.main.to_css_value(),
-        c_bck = to_hover(color_secondary.main),
-    )
-    .try_into()
-    .expect("error in css parsing");
+        border: 1px solid ${CssColor::rgba(0, 0, 0, 0.32)};
+        &:hover {
+            background-color: ${to_hover(theme.palette.text.primary)};
+        }
+        @media (hover: none) {
+            &:hover { background-color: transparent; }
+        }
+    );
+    let color_outlined_primary = sheet!(
+        color: ${color_primary.main};
+        border: 1px solid ${color_primary.main.alpha_multiply(0.5)};
+        &:hover {
+            border: 1px solid ${color_primary.main};
+            background-color: ${to_hover(color_primary.main)};
+        }
+        @media (hover: none) {
+            &:hover { background-color: transparent; }
+        }
+    );
+    let color_outlined_secondary = sheet!(
+        color: ${color_secondary.main};
+        border: 1px solid ${color_secondary.main.alpha_multiply(0.5)};
+        &:hover {
+            border: 1px solid ${color_secondary.main};
+            background-color: ${to_hover(color_secondary.main)};
+        }
+        @media (hover: none) {
+            &:hover { background-color: transparent; }
+        }
+    );
 
     // FIXME: push into theme
     let gray_300: CssColor = "#e0e0e0".try_into().unwrap();
@@ -405,90 +308,60 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
     let shadows4 = "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)";
     let shadows8 = "0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12)";
 
-    let color_contained_inherit: Scopes = format!(
-        r#"
-        color: {c_txt};
-        background-color: {c_bck};
-        box-shadow: {shadow};
-        &:hover {{
-            background-color: {c_bck_hover};
-            box-shadow: {shadow_hover};
-        }}
-        &:active {{
-            box-shadow: {shadow_active};
-        }}
-        @media (hover: none) {{
-            &:hover {{
-                background-color: {c_bck};
-                box-shadow: {shadow};
-            }}
-        }}
-        "#,
-        c_txt = theme.palette.contrast_text_color(gray_300).to_css_value(),
-        c_bck = gray_300.to_css_value(),
-        c_bck_hover = gray_a100.to_css_value(),
-        shadow = shadows2,
-        shadow_hover = shadows4,
-        shadow_active = shadows8,
-    )
-    .try_into()
-    .expect("error in css parsing");
-    let color_contained_primary: Scopes = format!(
-        r#"
-        color: {c_txt};
-        background-color: {c_bck};
-        box-shadow: {shadow};
-        &:hover {{
-            background-color: {c_bck_hover};
-            box-shadow: {shadow_hover};
-        }}
-        &:active {{
-            box-shadow: {shadow_active};
-        }}
-        @media (hover: none) {{
-            &:hover {{
-                background-color: {c_bck};
-                box-shadow: {shadow};
-            }}
-        }}
-        "#,
-        c_txt = color_primary.contrast.to_css_value(),
-        c_bck = color_primary.main.to_css_value(),
-        c_bck_hover = color_primary.dark.to_css_value(),
-        shadow = shadows2,
-        shadow_hover = shadows4,
-        shadow_active = shadows8,
-    )
-    .try_into()
-    .expect("error in css parsing");
-    let color_contained_secondary: Scopes = format!(
-        r#"
-        color: {c_txt};
-        background-color: {c_bck};
-        box-shadow: {shadow};
-        &:hover {{
-            background-color: {c_bck_hover};
-            box-shadow: {shadow_hover};
-        }}
-        &:active {{
-            box-shadow: {shadow_active};
-        }}
-        @media (hover: none) {{
-            &:hover {{
-                background-color: {c_bck};
-                box-shadow: {shadow};
-            }}
-        }}
-        "#,
-        c_txt = color_secondary.contrast.to_css_value(),
-        c_bck = color_secondary.main.to_css_value(),
-        c_bck_hover = color_secondary.dark.to_css_value(),
-        shadow = shadows2,
-        shadow_hover = shadows4,
-        shadow_active = shadows8,
-    )
-    .try_into()
-    .expect("error in css parsing");
+    let color_contained_inherit = sheet!(
+        color: ${theme.palette.contrast_text_color(gray_300)};
+        background-color: ${gray_300};
+        box-shadow: ${shadows2};
+        &:hover {
+            background-color: ${gray_a100};
+            box-shadow: ${shadows4};
+        }
+        &:active {
+            box-shadow: ${shadows8};
+        }
+        @media (hover: none) {
+            &:hover {
+                background-color: ${gray_300};
+                box-shadow: ${shadows2};
+            }
+        }
+    );
+    let color_contained_primary = sheet!(
+        color: ${color_primary.contrast};
+        background-color: ${color_primary.main};
+        box-shadow: ${shadows2};
+        &:hover {
+            background-color: ${color_primary.dark};
+            box-shadow: ${shadows4};
+        }
+        &:active {
+            box-shadow: ${shadows8};
+        }
+        @media (hover: none) {
+            &:hover {
+                background-color: ${color_primary.main};
+                box-shadow: ${shadows2};
+            }
+        }
+    );
+    let color_contained_secondary = sheet!(
+        color: ${color_secondary.contrast};
+        background-color: ${color_secondary.main};
+        box-shadow: ${shadows2};
+        &:hover {
+            background-color: ${color_secondary.dark};
+            box-shadow: ${shadows4};
+        }
+        &:active {
+            box-shadow: ${shadows8};
+        }
+        @media (hover: none) {
+            &:hover {
+                background-color: ${color_secondary.main};
+                box-shadow: ${shadows2};
+            }
+        }
+    );
 
     let root_override = theme
         .components
@@ -531,54 +404,54 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
 }
 
 impl DefaultStyles {
-    fn build_root_style(&self, props: &ButtonProperties) -> Scopes {
+    fn build_root_style(&self, props: &ButtonProperties) -> Sheet {
         use ButtonColor::*;
         use ButtonSize::*;
         use ButtonVariant::*;
 
-        let mut collected_scopes = Scopes::default();
-        collected_scopes.append(self.root_base.clone());
-        collected_scopes.append(self.root_inline.clone());
-        collected_scopes.append(match (props.variant, props.size) {
-            (Text, Small) => self.size_text_small.clone(),
-            (Text, Medium) => self.size_text_medium.clone(),
-            (Text, Large) => self.size_text_large.clone(),
-            (Outlined, Small) => self.size_outlined_small.clone(),
-            (Outlined, Medium) => self.size_outlined_medium.clone(),
-            (Outlined, Large) => self.size_outlined_large.clone(),
-            (Contained, Small) => self.size_contained_small.clone(),
-            (Contained, Medium) => self.size_contained_medium.clone(),
-            (Contained, Large) => self.size_contained_large.clone(),
+        let mut collected_scopes = vec![];
+        collected_scopes.extend_from_slice(&self.root_base);
+        collected_scopes.extend_from_slice(&self.root_inline);
+        collected_scopes.extend_from_slice(match (props.variant, props.size) {
+            (Text, Small) => &self.size_text_small,
+            (Text, Medium) => &self.size_text_medium,
+            (Text, Large) => &self.size_text_large,
+            (Outlined, Small) => &self.size_outlined_small,
+            (Outlined, Medium) => &self.size_outlined_medium,
+            (Outlined, Large) => &self.size_outlined_large,
+            (Contained, Small) => &self.size_contained_small,
+            (Contained, Medium) => &self.size_contained_medium,
+            (Contained, Large) => &self.size_contained_large,
         });
-        collected_scopes.append(match (props.variant, props.color) {
-            (Text, Inherit) => self.color_text_inherit.clone(),
-            (Text, Primary) => self.color_text_primary.clone(),
-            (Text, Secondary) => self.color_text_secondary.clone(),
-            (Outlined, Inherit) => self.color_outlined_inherit.clone(),
-            (Outlined, Primary) => self.color_outlined_primary.clone(),
-            (Outlined, Secondary) => self.color_outlined_secondary.clone(),
-            (Contained, Inherit) => self.color_contained_inherit.clone(),
-            (Contained, Primary) => self.color_contained_primary.clone(),
-            (Contained, Secondary) => self.color_contained_secondary.clone(),
+        collected_scopes.extend_from_slice(match (props.variant, props.color) {
+            (Text, Inherit) => &self.color_text_inherit,
+            (Text, Primary) => &self.color_text_primary,
+            (Text, Secondary) => &self.color_text_secondary,
+            (Outlined, Inherit) => &self.color_outlined_inherit,
+            (Outlined, Primary) => &self.color_outlined_primary,
+            (Outlined, Secondary) => &self.color_outlined_secondary,
+            (Contained, Inherit) => &self.color_contained_inherit,
+            (Contained, Primary) => &self.color_contained_primary,
+            (Contained, Secondary) => &self.color_contained_secondary,
         });
-        collected_scopes.append(self.root_override.clone());
+        collected_scopes.extend_from_slice(&self.root_override);
 
-        collected_scopes
+        Sheet::from(collected_scopes)
     }
-    fn build_disabled_style(&self, props: &ButtonProperties) -> Scopes {
+    fn build_disabled_style(&self, props: &ButtonProperties) -> Sheet {
         use ButtonColor::*;
         use ButtonVariant::*;
 
-        let mut collected_scopes = Scopes::default();
-        collected_scopes.append(self.disabled_root_base.clone());
-        collected_scopes.append(match (props.variant, props.color) {
-            (Contained, _) => self.disabled_contained.clone(),
-            (Outlined, Secondary) => self.disabled_outlined_secondary.clone(),
-            (Outlined, _) => self.disabled_outlined.clone(),
+        let mut collected_scopes = vec![];
+        collected_scopes.extend_from_slice(&self.disabled_root_base);
+        collected_scopes.extend_from_slice(match (props.variant, props.color) {
+            (Contained, _) => &self.disabled_contained,
+            (Outlined, Secondary) => &self.disabled_outlined_secondary,
+            (Outlined, _) => &self.disabled_outlined,
             _ => Default::default(),
         });
 
-        collected_scopes
+        Sheet::from(collected_scopes)
     }
 }
 
@@ -586,10 +459,10 @@ impl DefaultStyles {
 pub fn button(props: &ButtonProperties) -> Html {
     let styles = use_theme(derive_styles_from_theme);
 
-    let root_style = use_scopes("Mwi-button-root", styles.build_root_style(props));
-    let disabled_style = use_scopes("Mwi-button-disabled", styles.build_disabled_style(props));
+    let root_style = use_sheet("Mwi-button-root", styles.build_root_style(props));
+    let disabled_style = use_sheet("Mwi-button-disabled", styles.build_disabled_style(props));
     let disabled_style = if props.disabled {
-        Some(&disabled_style)
+        Some(disabled_style)
     } else {
         None
     };
@@ -597,7 +470,7 @@ pub fn button(props: &ButtonProperties) -> Html {
     let onclick = props.on_pressed.reform(ButtonPressedEvent::MousePress);
 
     html! {
-        <button class={classes![&root_style, disabled_style]} onclick={onclick}>
+        <button class={classes![root_style, disabled_style]} onclick={onclick}>
             { for props.children.iter() }
         </button>
     }
