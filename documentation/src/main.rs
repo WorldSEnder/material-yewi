@@ -1,6 +1,7 @@
+use material_yewi::link::Link;
 use material_yewi::typography::{Typography, TypographyVariant};
 use yew::prelude::*;
-use yew_router::{components::Link, Routable, Router};
+use yew_router::{Routable, Router};
 
 mod button_page;
 mod typography_page;
@@ -25,12 +26,8 @@ type DocLink = Link<DocRoute>;
 fn home() -> Html {
     html! {
         <>
-            <Typography variant={TypographyVariant::Button}>
-                <DocLink route={DocRoute::Buttons}>{"Buttons"}</DocLink>
-            </Typography>
-            <Typography variant={TypographyVariant::Button}>
-                <DocLink route={DocRoute::Typography}>{"Typography"}</DocLink>
-            </Typography>
+            <DocLink route={DocRoute::Buttons}>{"Buttons"}</DocLink>
+            <DocLink route={DocRoute::Typography}>{"Typography"}</DocLink>
         </>
     }
 }
@@ -40,9 +37,7 @@ fn not_found() -> Html {
     html! {
         <>
             <Typography variant={TypographyVariant::Body2}>{"The page you were searching for could not be found."}</Typography>
-            <Typography variant={TypographyVariant::Button}>
-                <DocLink route={DocRoute::Home}>{"Back to home page"}</DocLink>
-            </Typography>
+            <DocLink route={DocRoute::Home}>{"Back to home page"}</DocLink>
         </>
     }
 }
@@ -54,7 +49,7 @@ fn documentation() -> Html {
         let caption = "Beautifully styled components in Yew";
         html! {
             <>
-                <Typography variant={TypographyVariant::H1}><DocLink route={DocRoute::Home}>{title}</DocLink></Typography>
+                <DocLink route={DocRoute::Home} variant={TypographyVariant::H1}>{title}</DocLink>
                 <Typography variant={TypographyVariant::Caption}>{caption}</Typography>
             </>
         }
