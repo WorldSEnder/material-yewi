@@ -225,6 +225,15 @@ fn documentation() -> Html {
     }
     html! {
         <>
+            <stylist::yew::Global css={stylist::css!(
+                * {
+                    padding: 0;
+                    margin: 0;
+                }
+                body {
+                    font-family: Roboto, serif;
+                }
+            )} />
             {page_header()}
             <DocRouter render={Router::render(switch)} />
         </>
