@@ -347,6 +347,7 @@ dependencies = [
  "wasm-logger",
  "web-sys",
  "yew",
+ "yew-router",
 ]
 
 [[package]]
