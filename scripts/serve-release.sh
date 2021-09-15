@@ -14,5 +14,7 @@ popd  > /dev/null
 
 ./scripts/build-release.sh
 
-cd dist
+pushd dist
+# go get github.com/rhardih/serve
 serve -g -p 8080
+podp > /dev/null

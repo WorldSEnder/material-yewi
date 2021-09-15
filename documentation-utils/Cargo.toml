@@ -13,7 +13,7 @@ once_cell = "1.8.0"
 
 [dependencies.stylist]
 version = "^0.9.0"
-git = "https://github.com/futursolo/stylist-rs.git"
+git = "https://github.com/worldsender/stylist.git"
 branch = "yew-next"
 default-features = false
 features = ["macros"]

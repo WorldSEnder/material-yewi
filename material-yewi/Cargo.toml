@@ -27,7 +27,7 @@ router = ["yew-router"]
 
 [dependencies.stylist]
 version = "^0.9.0"
-git = "https://github.com/futursolo/stylist-rs.git"
+git = "https://github.com/worldsender/stylist.git"
 branch = "yew-next"
 default-features = false
 features = ["macros", "yew_integration"]
