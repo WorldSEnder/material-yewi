@@ -1,7 +1,7 @@
 use material_yewi::typography::{Typography, TypographyVariant};
 use material_yewi_documentation_macros::document_example;
 use stylist::ast::sheet;
-use stylist::yew::use_sheet;
+use stylist::yew::use_style;
 use yew::prelude::*;
 
 fn example() -> Html {
@@ -11,14 +11,11 @@ fn example() -> Html {
     }
     #[function_component(TypographyListing)]
     fn typography_listing(props: &WrapperProps) -> Html {
-        let wrapper_class = use_sheet(
-            "typography-listing",
-            sheet!(
-                max-width: 500px;
-            ),
-        );
+        let wrapper_class = use_style(/* "typography-listing", */ sheet!(
+            max-width: 500px;
+        ));
         ::yew::html! {
-            <div class={classes![&wrapper_class]}>
+            <div class={classes![wrapper_class]}>
                 { for props.children.iter() }
             </div>
         }

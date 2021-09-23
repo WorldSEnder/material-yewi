@@ -1,7 +1,7 @@
 use material_styles_yew::use_theme;
 use material_styles_yew::Theme;
 use stylist::ast::{sheet, Sheet};
-use stylist::yew::use_sheet;
+use stylist::yew::use_style;
 use yew::classes;
 use yew::function_component;
 use yew::html;
@@ -99,7 +99,7 @@ impl DefaultStyles {
 pub fn link<R: Routable + Clone + PartialEq + 'static>(props: &LinkProperties<R>) -> Html {
     let styles = use_theme(derive_styles_from_theme);
 
-    let root_style = use_sheet("Mwi-link-root", styles.build_root_style(props));
+    let root_style = use_style(/* "Mwi-link-root", */ styles.build_root_style(props));
 
     html! {
         <RawLink<R> route={props.route.clone()} classes={classes![root_style]}>

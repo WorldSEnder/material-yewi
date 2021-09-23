@@ -1,7 +1,7 @@
 use material_styles_yew::use_theme;
 use material_styles_yew::Theme;
 use stylist::ast::{sheet, Sheet};
-use stylist::yew::use_sheet;
+use stylist::yew::use_style;
 use yew::classes;
 use yew::function_component;
 use yew::html;
@@ -253,7 +253,7 @@ pub fn typography(props: &TypographyProperties) -> Html {
     root_styles.extend_from_slice(&styles.root_override);
     let root_styles = Sheet::from(root_styles);
 
-    let root_style = use_sheet("Mwi-typography-root", root_styles);
+    let root_style = use_style(/* "Mwi-typography-root", */ root_styles);
 
     html! {
         <@{component} class={classes![root_style]}>

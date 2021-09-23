@@ -18,16 +18,20 @@ web-sys = "^0.3.36"
 [dependencies]
 yew = "^0.18"
 material-styles-yew = { version = "^0.1.0", path = "../material-styles-yew" }
+gloo = "0.3"
 
 yew-router = { version = "^0.15", optional = true }
+lazy_static = "1.4.0"
+wasm-bindgen = "0.2.78"
+js-sys = "0.3.55"
+web-sys = { version = "0.3.55", features = ["FocusEvent", "VisibilityState", "DomRect", "Touch", "TouchList"] }
 
 [features]
 default = []
 router = ["yew-router"]
 
 [dependencies.stylist]
-version = "^0.9.0"
+version = "^0.10.0"
 git = "https://github.com/worldsender/stylist.git"
-branch = "yew-next"
 default-features = false
-features = ["macros", "yew_integration"]
+features = ["macros", "yew_integration", "yew_use_style"]

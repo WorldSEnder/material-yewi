@@ -3,7 +3,7 @@ use material_yewi::typography::Typography;
 use material_yewi::typography::TypographyVariant;
 use once_cell::sync::Lazy;
 use std::sync::{Arc, Mutex};
-use stylist::{ast::sheet, yew::use_sheet};
+use stylist::{ast::sheet, yew::use_style};
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq, Properties)]
@@ -27,50 +27,44 @@ fn use_unique_name(suggestion: &'static str) -> UseStateHandle<String> {
 
 #[function_component(Example)]
 pub fn example(props: &ExampleProps) -> Html {
-    let tab_styles = use_sheet(
-        "tab",
-        sheet!(
-            & {
-                display: none;
-            }
-            & + label {
-                cursor: pointer;
-                display: inline-block;
-                text-align: center;
+    let tab_styles = use_style(/* "tab", */ sheet!(
+        & {
+            display: none;
+        }
+        & + label {
+            cursor: pointer;
+            display: inline-block;
+            text-align: center;
 
-                -webkit-box-flex: 3;
-                -ms-flex-positive: 3;
-                        flex-grow: 3;
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                    user-select: none;
-                -webkit-transition: 0.3s background-color ease, 0.3s box-shadow ease;
-                transition: 0.3s background-color ease, 0.3s box-shadow ease;
-                height: 50px;
-                box-sizing: border-box;
-                padding: 15px;
-            }
-            &:checked + label {
-                background-color: #ccc;
-            }
-        ),
-    );
+            -webkit-box-flex: 3;
+            -ms-flex-positive: 3;
+                    flex-grow: 3;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+                user-select: none;
+            -webkit-transition: 0.3s background-color ease, 0.3s box-shadow ease;
+            transition: 0.3s background-color ease, 0.3s box-shadow ease;
+            height: 50px;
+            box-sizing: border-box;
+            padding: 15px;
+        }
+        &:checked + label {
+            background-color: #ccc;
+        }
+    ));
 
-    let tab_content_style = use_sheet(
-        "tab-content",
-        sheet!(
-            background-color: transparent;
-            left: 0;
-            border-radius: 6px;
+    let tab_content_style = use_style(/* "tab-content", */ sheet!(
+        background-color: transparent;
+        left: 0;
+        border-radius: 6px;
 
-            position: fixed;
-            height: 0;
-            opacity: 0;
-            visibility: hidden;
-        ),
-    );
-    let wrapper_style = use_sheet("tab-wrapper", sheet!());
+        position: fixed;
+        height: 0;
+        opacity: 0;
+        visibility: hidden;
+    ));
+    let wrapper_style = use_style(/* "tab-wrapper", */ sheet!());
 
     let mk_tab_content_active = |i| {
         sheet!(
@@ -86,8 +80,8 @@ pub fn example(props: &ExampleProps) -> Html {
             }
         )
     };
-    let code_styles = use_sheet("tab-code", mk_tab_content_active(1));
-    let result_style = use_sheet("tab-results", mk_tab_content_active(2));
+    let code_styles = use_style(/* "tab-code", */ mk_tab_content_active(1));
+    let result_style = use_style(/* "tab-results", */ mk_tab_content_active(2));
 
     let code_id = use_unique_name("code-sample");
     let tabgroup_id = use_unique_name("code-example");
@@ -95,15 +89,15 @@ pub fn example(props: &ExampleProps) -> Html {
 
     ::yew::html! {
         <div class={classes![wrapper_style]}>
-            <input type="radio" id={code_id.to_string()} name={tabgroup_id.to_string()} class={classes![&tab_styles]} />
+            <input type="radio" id={code_id.to_string()} name={tabgroup_id.to_string()} class={classes![tab_styles.clone()]} />
             <label for={code_id.to_string()}><Typography variant={TypographyVariant::Button}>{"Code sample"}</Typography></label>
             <input type="radio" id={results_id.to_string()} name={tabgroup_id.to_string()} class={classes![tab_styles]} checked={true} />
             <label for={results_id.to_string()}><Typography variant={TypographyVariant::Button}>{"Results"}</Typography></label>
 
-            <div class={classes![&tab_content_style, code_styles]}>
+            <div class={classes![tab_content_style.clone(), code_styles]}>
                 <pre>{props.code_sample.clone()}</pre>
             </div>
-            <div class={classes![&tab_content_style, result_style]}>
+            <div class={classes![tab_content_style, result_style]}>
                 <Demo>
                     { for props.children.iter() }
                 </Demo>

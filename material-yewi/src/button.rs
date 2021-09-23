@@ -3,16 +3,14 @@ use material_styles_yew::CssColor;
 use material_styles_yew::Theme;
 use std::convert::TryInto;
 use stylist::ast::{sheet, Sheet};
-use stylist::yew::use_sheet;
-use yew::classes;
 use yew::function_component;
 use yew::html;
 use yew::Callback;
 use yew::Children;
-use yew::KeyboardEvent;
-use yew::MouseEvent;
 use yew::Properties;
 
+pub use crate::button_base::ButtonPressedEvent;
+use crate::button_base::{ButtonBase, CLASS_DISABLED, CLASS_FOCUS_VISIBLE};
 // FIXME: ripple effects
 
 #[derive(Debug, Clone, PartialEq)]
@@ -24,13 +22,6 @@ impl From<Sheet> for ButtonStyleRoot {
     fn from(scopes: Sheet) -> Self {
         Self { css_scopes: scopes }
     }
-}
-
-pub enum ButtonPressedEvent {
-    MousePress(MouseEvent),
-    EnterPress(KeyboardEvent),
-    SpacebarPress(KeyboardEvent),
-    // ... more later on?
 }
 
 #[derive(Copy, Clone, PartialEq, Debug)]
@@ -92,11 +83,6 @@ pub struct ButtonProperties {
 }
 
 struct DefaultStyles {
-    // TODO: These styles are originally contained in ButtonBase. When we tear them apart,
-    // copy them over.
-    root_base: Sheet,
-    disabled_root_base: Sheet,
-
     root_inline: Sheet,
     // sizing
     size_text_small: Sheet,
@@ -119,9 +105,8 @@ struct DefaultStyles {
     color_contained_primary: Sheet,
     color_contained_secondary: Sheet,
     // disabled
-    disabled_outlined: Sheet,
-    disabled_contained: Sheet,
-    disabled_outlined_secondary: Sheet,
+    outlined: Sheet,
+    contained: Sheet,
     // overrides
     root_override: Sheet,
 }
@@ -131,42 +116,13 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
     let disabled_color = "rgba(0, 0, 0, 0.26)".to_string();
     let disabled_background_color = "rgba(0, 0, 0, 0.12)".to_string();
 
-    let root_base = sheet!(
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        box-sizing: border-box;
-        background-color: transparent;
-
-        outline: 0;
-        border: 0;
-        margin: 0;
-        border-radius: 0;
-        padding: 0;
-
-        cursor: pointer;
-        user-select: none;
-        vertical-align: middle;
-        text-decoration: none;
-        color: inherit;
-
-        -webkit-tap-highlight-color: transparent;
-        -moz-appearance: none;
-        -webkit-appearance: none;
-
-        &::-moz-focus-inner {
-            border-style: none;
-        }
-        @media print {
-            color-adjust: exact;
-        }
-    );
-    let disabled_root_base = sheet!(
-        pointer-events: none;
-        cursor: default;
-        color: ${&disabled_color};
-    );
+    // FIXME: push into theme
+    let gray_300: CssColor = "#e0e0e0".try_into().unwrap();
+    let gray_a100: CssColor = "#d5d5d5".try_into().unwrap();
+    let shadows2 = "0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)";
+    let shadows4 = "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)";
+    let shadows6 = "0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12)";
+    let shadows8 = "0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12)";
 
     // FIXME: transition from theme
     let root_basebox = sheet!(
@@ -177,6 +133,9 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
             box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
             border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
             color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        &.${CLASS_DISABLED} {
+            color: ${&disabled_color};
+        }
     );
     let root_hover = sheet!(
         &:hover { text-decoration: none; }
@@ -223,17 +182,20 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
         font-size: ${theme.typography.pixels_to_rem(15.0)};
     );
 
-    let disabled_outlined = sheet!(
-        border: 1px solid ${&disabled_background_color};
+    let outlined = sheet!(
+        &.${CLASS_DISABLED} {
+            border: 1px solid ${" "}${&disabled_background_color};
+        }
     );
-
-    let disabled_outlined_secondary = sheet!(
-        border: 1px solid ${&disabled_color};
-    );
-    let disabled_contained = sheet!(
-        color: ${&disabled_color};
-        box-shadow: none;
-        background-color: ${&disabled_background_color};
+    let contained = sheet!(
+        &.${CLASS_DISABLED} {
+            color: ${&disabled_color};
+            box-shadow: none;
+            background-color: ${&disabled_background_color};
+        }
+        &.${CLASS_FOCUS_VISIBLE} {
+            box-shadow: ${shadows6};
+        }
     );
 
     let to_hover = |c: CssColor| c.alpha_multiply(theme.palette.actions.hover_opacity);
@@ -270,7 +232,7 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
 
     let color_outlined_inherit = sheet!(
         color: inherit;
-        border: 1px solid ${CssColor::rgba(0, 0, 0, 0.32)};
+        border: 1px solid ${" "}${CssColor::rgba(0, 0, 0, 0.32)};
         &:hover {
             background-color: ${to_hover(theme.palette.text.primary)};
         }
@@ -280,9 +242,9 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
     );
     let color_outlined_primary = sheet!(
         color: ${color_primary.main};
-        border: 1px solid ${color_primary.main.alpha_multiply(0.5)};
+        border: 1px solid ${" "}${color_primary.main.alpha_multiply(0.5)};
         &:hover {
-            border: 1px solid ${color_primary.main};
+            border: 1px solid ${" "}${color_primary.main};
             background-color: ${to_hover(color_primary.main)};
         }
         @media (hover: none) {
@@ -291,22 +253,18 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
     );
     let color_outlined_secondary = sheet!(
         color: ${color_secondary.main};
-        border: 1px solid ${color_secondary.main.alpha_multiply(0.5)};
+        border: 1px solid ${" "}${color_secondary.main.alpha_multiply(0.5)};
         &:hover {
-            border: 1px solid ${color_secondary.main};
+            border: 1px solid ${" "}${color_secondary.main};
             background-color: ${to_hover(color_secondary.main)};
         }
         @media (hover: none) {
             &:hover { background-color: transparent; }
         }
+        &.${CLASS_DISABLED} {
+            border: 1px solid ${" "}${&disabled_color};
+        }
     );
-
-    // FIXME: push into theme
-    let gray_300: CssColor = "#e0e0e0".try_into().unwrap();
-    let gray_a100: CssColor = "#d5d5d5".try_into().unwrap();
-    let shadows2 = "0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)";
-    let shadows4 = "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)";
-    let shadows8 = "0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12)";
 
     let color_contained_inherit = sheet!(
         color: ${theme.palette.contrast_text_color(gray_300)};
@@ -371,8 +329,6 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
         .unwrap_or_default();
 
     DefaultStyles {
-        root_base,
-        disabled_root_base,
         root_inline,
         //
         size_text_small,
@@ -395,9 +351,8 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
         color_contained_primary,
         color_contained_secondary,
         //
-        disabled_outlined,
-        disabled_outlined_secondary,
-        disabled_contained,
+        outlined,
+        contained,
         //
         root_override,
     }
@@ -410,7 +365,6 @@ impl DefaultStyles {
         use ButtonVariant::*;
 
         let mut collected_scopes = vec![];
-        collected_scopes.extend_from_slice(&self.root_base);
         collected_scopes.extend_from_slice(&self.root_inline);
         collected_scopes.extend_from_slice(match (props.variant, props.size) {
             (Text, Small) => &self.size_text_small,
@@ -434,22 +388,12 @@ impl DefaultStyles {
             (Contained, Primary) => &self.color_contained_primary,
             (Contained, Secondary) => &self.color_contained_secondary,
         });
-        collected_scopes.extend_from_slice(&self.root_override);
-
-        Sheet::from(collected_scopes)
-    }
-    fn build_disabled_style(&self, props: &ButtonProperties) -> Sheet {
-        use ButtonColor::*;
-        use ButtonVariant::*;
-
-        let mut collected_scopes = vec![];
-        collected_scopes.extend_from_slice(&self.disabled_root_base);
         collected_scopes.extend_from_slice(match (props.variant, props.color) {
-            (Contained, _) => &self.disabled_contained,
-            (Outlined, Secondary) => &self.disabled_outlined_secondary,
-            (Outlined, _) => &self.disabled_outlined,
+            (Contained, _) => &self.contained,
+            (Outlined, _) => &self.outlined,
             _ => Default::default(),
         });
+        collected_scopes.extend_from_slice(&self.root_override);
 
         Sheet::from(collected_scopes)
     }
@@ -459,19 +403,15 @@ impl DefaultStyles {
 pub fn button(props: &ButtonProperties) -> Html {
     let styles = use_theme(derive_styles_from_theme);
 
-    let root_style = use_sheet("Mwi-button-root", styles.build_root_style(props));
-    let disabled_style = use_sheet("Mwi-button-disabled", styles.build_disabled_style(props));
-    let disabled_style = if props.disabled {
-        Some(disabled_style)
-    } else {
-        None
-    };
-
-    let onclick = props.on_pressed.reform(ButtonPressedEvent::MousePress);
+    let root_style = styles.build_root_style(props);
 
     html! {
-        <button class={classes![root_style, disabled_style]} onclick={onclick}>
+        <ButtonBase
+            class={root_style}
+            disabled={props.disabled}
+            on_pressed={props.on_pressed.clone()}
+        >
             { for props.children.iter() }
-        </button>
+        </ButtonBase>
     }
 }

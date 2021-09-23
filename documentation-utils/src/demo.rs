@@ -1,7 +1,7 @@
 use material_styles_yew::use_theme;
 use stylist::ast::sheet;
 use stylist::manager::StyleManager;
-use stylist::yew::use_sheet;
+use stylist::yew::use_style;
 use yew::classes;
 use yew::function_component;
 use yew::html;
@@ -41,13 +41,10 @@ pub fn demo(props: &DemoProperties) -> Html {
             || {}
         });
     }
-    let wrapper_style = use_sheet(
-        "demo",
-        sheet!(
-            display: flex;
-            margin: 0 10px;
-        ),
-    );
+    let wrapper_style = use_style(/* "demo", */ sheet!(
+        display: flex;
+        margin: 0 10px;
+    ));
     let frame_sheet = use_theme(|_theme| {
         let shadows2 = "0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)";
         sheet!(
@@ -58,7 +55,7 @@ pub fn demo(props: &DemoProperties) -> Html {
             box-shadow: ${shadows2};
         )
     });
-    let frame_style = use_sheet("demo", frame_sheet.clone());
+    let frame_style = use_style(/* "demo", */ frame_sheet.clone());
 
     let div_ref = style_root_ref.borrow().clone();
     let fake_iframe = "div";
