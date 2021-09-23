@@ -244,7 +244,7 @@ pub fn ripples(props: &RipplesProp) -> Html {
             {
                 for ripples.iter().map(|(k, r)|
                     html_nested! {
-                        <Ripple key={*k} with r.clone() />
+                        <Ripple key={*k} ..r.clone() />
                     }
                 )
             }
