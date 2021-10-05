@@ -3,6 +3,7 @@ mod utils;
 
 pub mod button;
 pub mod button_base;
-pub mod link;
 #[cfg(feature = "router")]
+pub mod link;
+pub mod paper;
 pub mod typography;

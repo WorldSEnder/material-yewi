@@ -1,10 +1,12 @@
-use crate::demo::Demo;
 use material_yewi::typography::Typography;
 use material_yewi::typography::TypographyVariant;
 use once_cell::sync::Lazy;
 use std::sync::{Arc, Mutex};
 use stylist::{ast::sheet, yew::use_style};
 use yew::prelude::*;
+
+use crate::code::Code;
+use crate::demo::Demo;
 
 #[derive(Clone, PartialEq, Properties)]
 pub struct ExampleProps {
@@ -27,7 +29,7 @@ fn use_unique_name(suggestion: &'static str) -> UseStateHandle<String> {
 
 #[function_component(Example)]
 pub fn example(props: &ExampleProps) -> Html {
-    let tab_styles = use_style(/* "tab", */ sheet!(
+    let tab_styles = use_style!(/* "tab", */
         & {
             display: none;
         }
@@ -52,9 +54,9 @@ pub fn example(props: &ExampleProps) -> Html {
         &:checked + label {
             background-color: #ccc;
         }
-    ));
+    );
 
-    let tab_content_style = use_style(/* "tab-content", */ sheet!(
+    let tab_content_style = use_style!(/* "tab-content", */
         background-color: transparent;
         left: 0;
         border-radius: 6px;
@@ -63,8 +65,8 @@ pub fn example(props: &ExampleProps) -> Html {
         height: 0;
         opacity: 0;
         visibility: hidden;
-    ));
-    let wrapper_style = use_style(/* "tab-wrapper", */ sheet!());
+    );
+    let wrapper_style = use_style!(/* "tab-wrapper", */);
 
     let mk_tab_content_active = |i| {
         sheet!(
@@ -95,7 +97,7 @@ pub fn example(props: &ExampleProps) -> Html {
             <label for={results_id.to_string()}><Typography variant={TypographyVariant::Button}>{"Results"}</Typography></label>
 
             <div class={classes![tab_content_style.clone(), code_styles]}>
-                <pre>{props.code_sample.clone()}</pre>
+                <Code snippet={props.code_sample.clone()} />
             </div>
             <div class={classes![tab_content_style, result_style]}>
                 <Demo>

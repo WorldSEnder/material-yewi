@@ -3,6 +3,7 @@ use proc_macro::TokenStream;
 use proc_macro2::Ident;
 use proc_macro2::Span;
 use quote::quote;
+use quote::quote_spanned;
 use syn::{Error, Lit, LitStr};
 use unindent::unindent;
 
@@ -51,13 +52,16 @@ pub fn document_example(example: TokenStream) -> TokenStream {
     let sample_ident = Ident::new("code_sample", Span::mixed_site());
     let html_ident = Ident::new("built_documentation_html", Span::mixed_site());
 
+    let declare_sample = quote_spanned! {mod_path.span()=>
+        const #sample_ident: &str = include_str!( #mod_path );
+        #[path = #mod_path ]
+        mod #example_mod_ident;
+        let #html_ident: ::yew::Html = { #example_mod_ident::render() };
+    };
     let macro_result = quote! {
         {
-            const #sample_ident: &str = include_str!( #mod_path );
-            #[path = #mod_path ]
-            mod #example_mod_ident;
+            #declare_sample
 
-            let #html_ident: ::yew::Html = { #example_mod_ident::render() };
             ::yew::html! {
                 <::material_yewi_documentation_utils::example::Example code_sample={ #sample_ident }>
                     {#html_ident}

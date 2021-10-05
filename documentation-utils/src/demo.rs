@@ -41,18 +41,22 @@ pub fn demo(props: &DemoProperties) -> Html {
             || {}
         });
     }
-    let wrapper_style = use_style(/* "demo", */ sheet!(
+    let wrapper_style = use_style!(/* "demo", */
         display: flex;
         margin: 0 10px;
-    ));
-    let frame_sheet = use_theme(|_theme| {
-        let shadows2 = "0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)";
+    );
+    let frame_sheet = use_theme(|theme| {
         sheet!(
             border: 0;
             flex-grow: 1;
             max-height: 400px;
             overflow-x: scroll;
-            box-shadow: ${shadows2};
+            box-shadow: ${&theme.shadows[2]};
+            padding: 24px;
+            margin: auto;
+            display: flex;
+            justify-content: center;
+            background-color: #F0F2F3;
         )
     });
     let frame_style = use_style(/* "demo", */ frame_sheet.clone());

@@ -4,6 +4,7 @@ use yew::prelude::*;
 use yew_router::{Routable, Router};
 
 mod button;
+mod paper;
 mod typography;
 
 #[derive(PartialEq, Clone, Routable)]
@@ -12,6 +13,8 @@ pub enum DocRoute {
     Home,
     #[at("/buttons")]
     Buttons,
+    #[at("/paper")]
+    Paper,
     #[at("/typography")]
     Typography,
     #[not_found]
@@ -27,6 +30,7 @@ fn home() -> Html {
     html! {
         <>
             <DocLink route={DocRoute::Buttons}>{"Buttons"}</DocLink>
+            <DocLink route={DocRoute::Paper}>{"Paper"}</DocLink>
             <DocLink route={DocRoute::Typography}>{"Typography"}</DocLink>
         </>
     }
@@ -59,6 +63,7 @@ fn documentation() -> Html {
         match route {
             DocRoute::Home => html! { <Home /> },
             DocRoute::Buttons => html! { <button::Doc /> },
+            DocRoute::Paper => html! { <paper::Doc /> },
             DocRoute::Typography => html! { <typography::Doc /> },
             DocRoute::NotFound => html! { <NotFound /> },
         }
