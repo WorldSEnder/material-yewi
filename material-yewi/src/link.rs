@@ -1,5 +1,6 @@
 use material_styles_yew::use_theme;
 use material_styles_yew::Theme;
+use stylist::ast::ScopeContent;
 use stylist::ast::{sheet, Sheet};
 use stylist::yew::use_style;
 use yew::classes;
@@ -37,6 +38,8 @@ impl Default for Underline {
 }
 #[derive(Default, Clone, PartialEq, Debug, Properties)]
 pub struct LinkProperties<R: PartialEq> {
+    #[prop_or_default]
+    pub class: Sheet,
     #[prop_or_default]
     pub children: Children,
     #[prop_or_default]
@@ -81,7 +84,7 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
 }
 
 impl DefaultStyles {
-    fn build_root_style<R: PartialEq>(&self, props: &LinkProperties<R>) -> Sheet {
+    fn build_root_style<R: PartialEq>(&self, props: &LinkProperties<R>) -> Vec<ScopeContent> {
         use Underline::*;
 
         let mut collected_scopes = vec![];
@@ -91,7 +94,7 @@ impl DefaultStyles {
             None => &self.no_underline,
         });
 
-        Sheet::from(collected_scopes)
+        collected_scopes
     }
 }
 
@@ -99,7 +102,10 @@ impl DefaultStyles {
 pub fn link<R: Routable + Clone + PartialEq + 'static>(props: &LinkProperties<R>) -> Html {
     let styles = use_theme(derive_styles_from_theme);
 
-    let root_style = use_style(/* "Mwi-link-root", */ styles.build_root_style(props));
+    let mut root_style = styles.build_root_style(props);
+    root_style.extend_from_slice(&props.class);
+    let root_style = Sheet::from(root_style);
+    let root_style = use_style(/* "Mwi-link-root", */ root_style);
 
     html! {
         <RawLink<R> route={props.route.clone()} classes={classes![root_style]}>

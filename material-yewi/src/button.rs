@@ -2,7 +2,7 @@ use material_styles_yew::use_theme;
 use material_styles_yew::CssColor;
 use material_styles_yew::Theme;
 use std::convert::TryInto;
-use stylist::ast::{sheet, Sheet};
+use stylist::ast::{sheet, ScopeContent, Sheet};
 use yew::function_component;
 use yew::html;
 use yew::Callback;
@@ -65,6 +65,8 @@ impl Default for ButtonSize {
 
 #[derive(Default, Clone, PartialEq, Debug, Properties)]
 pub struct ButtonProperties {
+    #[prop_or_default]
+    pub class: Sheet,
     #[prop_or_default]
     pub children: Children,
     /// Event fired when the button is considered pressed.
@@ -359,7 +361,7 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
 }
 
 impl DefaultStyles {
-    fn build_root_style(&self, props: &ButtonProperties) -> Sheet {
+    fn build_root_style(&self, props: &ButtonProperties) -> Vec<ScopeContent> {
         use ButtonColor::*;
         use ButtonSize::*;
         use ButtonVariant::*;
@@ -395,7 +397,7 @@ impl DefaultStyles {
         });
         collected_scopes.extend_from_slice(&self.root_override);
 
-        Sheet::from(collected_scopes)
+        collected_scopes
     }
 }
 
@@ -403,7 +405,9 @@ impl DefaultStyles {
 pub fn button(props: &ButtonProperties) -> Html {
     let styles = use_theme(derive_styles_from_theme);
 
-    let root_style = styles.build_root_style(props);
+    let mut root_style = styles.build_root_style(props);
+    root_style.extend_from_slice(&props.class);
+    let root_style = Sheet::from(root_style);
 
     html! {
         <ButtonBase

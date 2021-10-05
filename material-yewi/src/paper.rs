@@ -1,6 +1,7 @@
 use material_styles_yew::use_theme;
 use material_styles_yew::ShadowSpec;
 use material_styles_yew::Theme;
+use stylist::ast::ScopeContent;
 use stylist::ast::{sheet, Sheet};
 use stylist::yew::use_style;
 use yew::classes;
@@ -47,6 +48,8 @@ impl Default for PaperEdgeStyle {
 #[derive(Default, Clone, PartialEq, Debug, Properties)]
 pub struct PaperProperties {
     #[prop_or_default]
+    pub class: Sheet,
+    #[prop_or_default]
     pub children: Children,
     #[prop_or_default]
     pub variant: PaperVariant,
@@ -85,7 +88,7 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
 }
 
 impl DefaultStyles {
-    fn build_root_style(&self, props: &PaperProperties) -> Sheet {
+    fn build_root_style(&self, props: &PaperProperties) -> Vec<ScopeContent> {
         use PaperEdgeStyle::*;
         use PaperVariant::*;
 
@@ -106,7 +109,7 @@ impl DefaultStyles {
             )),
         };
 
-        Sheet::from(collected_scopes)
+        collected_scopes
     }
 }
 
@@ -114,7 +117,10 @@ impl DefaultStyles {
 pub fn paper(props: &PaperProperties) -> Html {
     let styles = use_theme(derive_styles_from_theme);
 
-    let root_style = use_style(/* "Mwi-paper-root", */ styles.build_root_style(props));
+    let mut root_style = styles.build_root_style(props);
+    root_style.extend_from_slice(&props.class);
+    let root_style = Sheet::from(root_style);
+    let root_style = use_style(/* ""Mwi-paper-root", */ root_style);
 
     html! {
         <div class={classes![root_style]}>

@@ -80,6 +80,8 @@ impl Default for TypographyAlign {
 #[derive(Default, Clone, PartialEq, Debug, Properties)]
 pub struct TypographyProperties {
     #[prop_or_default]
+    pub class: Sheet,
+    #[prop_or_default]
     pub children: Children,
     #[prop_or_default]
     pub variant: TypographyVariant,
@@ -251,6 +253,7 @@ pub fn typography(props: &TypographyProperties) -> Html {
     root_styles.extend_from_slice(&no_wrap_sheet);
     root_styles.extend_from_slice(&align_sheet);
     root_styles.extend_from_slice(&styles.root_override);
+    root_styles.extend_from_slice(&props.class);
     let root_styles = Sheet::from(root_styles);
 
     let root_style = use_style(/* "Mwi-typography-root", */ root_styles);
