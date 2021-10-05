@@ -35,25 +35,31 @@ pub fn document_example(example: TokenStream) -> TokenStream {
     let lit: LitStr = syn::parse(example)
         .and_then(|l| match l {
             Lit::Str(s) => Ok(s),
-            l => Err(Error::new(l.span(), "expected a string literal")),
+            l => Err(Error::new(
+                l.span(),
+                "expected the filename of the example source",
+            )),
         })
         .expect(concat!(
             "This macro takes exactly one literal string.\n",
             "This is because it must emit the example literally into the output html."
         ));
 
-    let example_clode: proc_macro2::TokenStream =
-        lit.value().parse().expect("Expected valid rust code");
+    let mod_path = LitStr::new(&unindent(&lit.value()), lit.span());
 
-    let formatted_lit = LitStr::new(&unindent(&lit.value()), lit.span());
+    let example_mod_ident = Ident::new("example", Span::mixed_site());
+    let sample_ident = Ident::new("code_sample", Span::mixed_site());
     let html_ident = Ident::new("built_documentation_html", Span::mixed_site());
 
     let macro_result = quote! {
-        let #html_ident: ::yew::Html = { #example_clode };
-
         {
+            const #sample_ident: &str = include_str!( #mod_path );
+            #[path = #mod_path ]
+            mod #example_mod_ident;
+
+            let #html_ident: ::yew::Html = { #example_mod_ident::render() };
             ::yew::html! {
-                <::material_yewi_documentation_utils::example::Example code_sample={#formatted_lit}>
+                <::material_yewi_documentation_utils::example::Example code_sample={ #sample_ident }>
                     {#html_ident}
                 </::material_yewi_documentation_utils::example::Example>
             }
