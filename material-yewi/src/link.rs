@@ -53,6 +53,7 @@ struct DefaultStyles {
     always_underline: Sheet,
     hover_underline: Sheet,
     no_underline: Sheet,
+    root_override: Sheet,
 }
 
 fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
@@ -76,10 +77,18 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
         text-decoration: none;
     );
 
+    let root_override = theme
+        .components
+        .search_override::<LinkStyleRoot>()
+        .map(|c| &c.css_scopes)
+        .cloned()
+        .unwrap_or_default();
+
     DefaultStyles {
         always_underline,
         hover_underline,
         no_underline,
+        root_override,
     }
 }
 
@@ -93,6 +102,7 @@ impl DefaultStyles {
             Hover => &self.hover_underline,
             None => &self.no_underline,
         });
+        collected_scopes.extend_from_slice(&self.root_override);
 
         collected_scopes
     }

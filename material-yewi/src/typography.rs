@@ -176,12 +176,6 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
     let align_right = sheet!(text-align: right;);
     let align_center = sheet!(text-align: right;);
     let align_justify = sheet!(text-align: right;);
-    let root_override = theme
-        .components
-        .search_override::<TypographyStyleRoot>()
-        .map(|c| &c.css_scopes)
-        .cloned()
-        .unwrap_or_default();
     let display_block = sheet!(display: block;);
 
     let mut button = vec![];
@@ -198,6 +192,13 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
     overline.extend_from_slice(&display_block);
     overline.extend_from_slice(&theme.typography.overline);
     let overline = Sheet::from(overline);
+
+    let root_override = theme
+        .components
+        .search_override::<TypographyStyleRoot>()
+        .map(|c| &c.css_scopes)
+        .cloned()
+        .unwrap_or_default();
 
     DefaultStyles {
         root,

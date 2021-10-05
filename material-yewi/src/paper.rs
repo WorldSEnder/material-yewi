@@ -62,6 +62,7 @@ struct DefaultStyles {
     rounded_style: Sheet,
     outlined_style: Sheet,
     shadows: [ShadowSpec; 25],
+    root_override: Sheet,
 }
 
 fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
@@ -79,11 +80,19 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
     );
     // TODO: "dark" mode, gradients in background, etc...
 
+    let root_override = theme
+        .components
+        .search_override::<PaperStyleRoot>()
+        .map(|c| &c.css_scopes)
+        .cloned()
+        .unwrap_or_default();
+
     DefaultStyles {
         root_style,
         rounded_style,
         outlined_style,
         shadows: theme.shadows.0.clone(),
+        root_override,
     }
 }
 
@@ -108,6 +117,7 @@ impl DefaultStyles {
                 box-shadow: ${&self.shadows[24]};
             )),
         };
+        collected_scopes.extend_from_slice(&self.root_override);
 
         collected_scopes
     }

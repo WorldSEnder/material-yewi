@@ -1,8 +1,11 @@
+use material_yewi::app_bar::{AppBar, AppBarColor, AppBarPosition};
 use material_yewi::link::Link;
+use material_yewi::toolbar::Toolbar;
 use material_yewi::typography::{Typography, TypographyVariant};
 use yew::prelude::*;
 use yew_router::{Routable, Router};
 
+mod app_bar;
 mod button;
 mod paper;
 mod typography;
@@ -11,6 +14,8 @@ mod typography;
 pub enum DocRoute {
     #[at("/")]
     Home,
+    #[at("/appbar")]
+    AppBar,
     #[at("/buttons")]
     Buttons,
     #[at("/paper")]
@@ -29,6 +34,7 @@ type DocLink = Link<DocRoute>;
 fn home() -> Html {
     html! {
         <>
+            <DocLink route={DocRoute::AppBar}>{"App Bar"}</DocLink>
             <DocLink route={DocRoute::Buttons}>{"Buttons"}</DocLink>
             <DocLink route={DocRoute::Paper}>{"Paper"}</DocLink>
             <DocLink route={DocRoute::Typography}>{"Typography"}</DocLink>
@@ -53,8 +59,10 @@ fn documentation() -> Html {
         let caption = "Beautifully styled components in Yew";
         html! {
             <>
-                <DocLink route={DocRoute::Home} variant={TypographyVariant::H1}>{title}</DocLink>
-                <Typography variant={TypographyVariant::Caption}>{caption}</Typography>
+                <AppBar position={AppBarPosition::Static} color={AppBarColor::Transparent}><Toolbar>
+                    <DocLink route={DocRoute::Home} variant={TypographyVariant::H1}>{title}</DocLink>
+                    <Typography variant={TypographyVariant::Caption}>{caption}</Typography>
+                </Toolbar></AppBar>
             </>
         }
     };
@@ -62,6 +70,7 @@ fn documentation() -> Html {
     fn switch(route: &DocRoute) -> Html {
         match route {
             DocRoute::Home => html! { <Home /> },
+            DocRoute::AppBar => html! { <app_bar::Doc /> },
             DocRoute::Buttons => html! { <button::Doc /> },
             DocRoute::Paper => html! { <paper::Doc /> },
             DocRoute::Typography => html! { <typography::Doc /> },
