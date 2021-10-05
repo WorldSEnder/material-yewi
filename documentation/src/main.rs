@@ -3,8 +3,8 @@ use material_yewi::typography::{Typography, TypographyVariant};
 use yew::prelude::*;
 use yew_router::{Routable, Router};
 
-mod button_page;
-mod typography_page;
+mod button;
+mod typography;
 
 #[derive(PartialEq, Clone, Routable)]
 pub enum DocRoute {
@@ -58,8 +58,8 @@ fn documentation() -> Html {
     fn switch(route: &DocRoute) -> Html {
         match route {
             DocRoute::Home => html! { <Home /> },
-            DocRoute::Buttons => html! { <button_page::Doc /> },
-            DocRoute::Typography => html! { <typography_page::Doc /> },
+            DocRoute::Buttons => html! { <button::Doc /> },
+            DocRoute::Typography => html! { <typography::Doc /> },
             DocRoute::NotFound => html! { <NotFound /> },
         }
     }
