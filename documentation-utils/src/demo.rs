@@ -55,7 +55,7 @@ pub fn demo(props: &DemoProperties) -> Html {
             padding: 24px;
             margin: auto;
             display: flex;
-            justify-content: center;
+            justify-content: safe center;
             background-color: #F0F2F3;
         )
     });

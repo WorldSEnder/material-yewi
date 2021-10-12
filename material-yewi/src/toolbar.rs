@@ -68,7 +68,7 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
     let root_style = sheet!(
         position: relative;
         display: flex;
-        align-items: center;
+        align-items: safe center;
     );
     let spacing2 = "16px"; // TODO: put into theme
     let spacing3 = "16px";

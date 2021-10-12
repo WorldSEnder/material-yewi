@@ -1,7 +1,6 @@
 use material_styles_yew::use_theme;
 use material_styles_yew::CssColor;
 use material_styles_yew::Theme;
-use std::convert::TryInto;
 use stylist::ast::{sheet, ScopeContent, Sheet};
 use yew::function_component;
 use yew::html;
@@ -117,14 +116,13 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
     // FIXME: push into theme
     let disabled_color = "rgba(0, 0, 0, 0.26)".to_string();
     let disabled_background_color = "rgba(0, 0, 0, 0.12)".to_string();
+    let gray_300: CssColor = CssColor::rgb(0xe0, 0xe0, 0xe0);
+    let gray_a100: CssColor = CssColor::rgb(0xd5, 0xd5, 0xd5);
 
-    // FIXME: push into theme
-    let gray_300: CssColor = "#e0e0e0".try_into().unwrap();
-    let gray_a100: CssColor = "#d5d5d5".try_into().unwrap();
-    let shadows2 = "0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)";
-    let shadows4 = "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)";
-    let shadows6 = "0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12)";
-    let shadows8 = "0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12)";
+    let shadows2 = &theme.shadows[2];
+    let shadows4 = &theme.shadows[4];
+    let shadows6 = &theme.shadows[6];
+    let shadows8 = &theme.shadows[8];
 
     // FIXME: transition from theme
     let root_basebox = sheet!(
