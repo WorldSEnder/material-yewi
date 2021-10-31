@@ -8,8 +8,8 @@ use yew::Callback;
 use yew::Children;
 use yew::Properties;
 
-pub use crate::button_base::ButtonPressedEvent;
 use crate::button_base::{ButtonBase, CLASS_DISABLED, CLASS_FOCUS_VISIBLE};
+pub use crate::button_base::{ButtonPressedEvent, RippleBehaviour};
 // FIXME: ripple effects
 
 #[derive(Debug, Clone, PartialEq)]
@@ -62,7 +62,7 @@ impl Default for ButtonSize {
     }
 }
 
-#[derive(Default, Clone, PartialEq, Debug, Properties)]
+#[derive(Clone, PartialEq, Debug, Properties)]
 pub struct ButtonProperties {
     #[prop_or_default]
     pub class: Sheet,
@@ -81,6 +81,10 @@ pub struct ButtonProperties {
     pub size: ButtonSize,
     #[prop_or(false)]
     pub disabled: bool,
+    #[prop_or(RippleBehaviour::Interactive)]
+    pub ripples: RippleBehaviour,
+    #[prop_or(0)]
+    pub tab_index: i32,
 }
 
 struct DefaultStyles {
@@ -412,6 +416,8 @@ pub fn button(props: &ButtonProperties) -> Html {
             class={root_style}
             disabled={props.disabled}
             on_pressed={props.on_pressed.clone()}
+            ripples={props.ripples}
+            tab_index={props.tab_index}
         >
             { for props.children.iter() }
         </ButtonBase>
