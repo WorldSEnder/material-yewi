@@ -8,8 +8,10 @@ use yew::Callback;
 use yew::Children;
 use yew::Properties;
 
-use crate::button_base::{ButtonBase, CLASS_DISABLED, CLASS_FOCUS_VISIBLE};
-pub use crate::button_base::{ButtonPressedEvent, RippleBehaviour};
+use crate::button_base::ButtonBase;
+pub use crate::button_base::{
+    ButtonPressedEvent, RippleBehaviour, CLASS_DISABLED, CLASS_FOCUS_VISIBLE,
+};
 // FIXME: ripple effects
 
 #[derive(Debug, Clone, PartialEq)]
@@ -118,11 +120,11 @@ struct DefaultStyles {
 
 fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
     // FIXME: push into theme
-    let disabled_color = "rgba(0, 0, 0, 0.26)".to_string();
-    let disabled_background_color = "rgba(0, 0, 0, 0.12)".to_string();
     let gray_300: CssColor = CssColor::rgb(0xe0, 0xe0, 0xe0);
     let gray_a100: CssColor = CssColor::rgb(0xd5, 0xd5, 0xd5);
 
+    let disabled_color = &theme.palette.actions.disabled;
+    let disabled_background_color = &theme.palette.actions.disabled_background;
     let shadows2 = &theme.shadows[2];
     let shadows4 = &theme.shadows[4];
     let shadows6 = &theme.shadows[6];
@@ -138,7 +140,7 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
             border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
             color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
         &.${CLASS_DISABLED} {
-            color: ${&disabled_color};
+            color: ${disabled_color};
         }
     );
     let root_hover = sheet!(
@@ -188,14 +190,14 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
 
     let outlined = sheet!(
         &.${CLASS_DISABLED} {
-            border: 1px solid ${" "}${&disabled_background_color};
+            border: 1px solid ${" "}${disabled_background_color};
         }
     );
     let contained = sheet!(
         &.${CLASS_DISABLED} {
-            color: ${&disabled_color};
+            color: ${disabled_color};
             box-shadow: none;
-            background-color: ${&disabled_background_color};
+            background-color: ${disabled_background_color};
         }
         &.${CLASS_FOCUS_VISIBLE} {
             box-shadow: ${shadows6};
@@ -266,7 +268,7 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
             &:hover { background-color: transparent; }
         }
         &.${CLASS_DISABLED} {
-            border: 1px solid ${" "}${&disabled_color};
+            border: 1px solid ${" "}${disabled_color};
         }
     );
 
