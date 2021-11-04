@@ -159,12 +159,18 @@ impl Default for TextColorSpec {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PaletteActions {
+    pub active: CssColor,
+    pub disabled: CssColor,
+    pub disabled_background: CssColor,
     pub hover_opacity: f32,
 }
 
 impl Default for PaletteActions {
     fn default() -> Self {
         Self {
+            active: CssColor::rgba(0, 0, 0, 0.54),
+            disabled: CssColor::rgba(0, 0, 0, 0.26),
+            disabled_background: CssColor::rgba(0, 0, 0, 0.12),
             hover_opacity: 0.04,
         }
     }

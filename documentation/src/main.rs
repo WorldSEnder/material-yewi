@@ -7,6 +7,7 @@ use yew_router::{Routable, Router};
 
 mod app_bar;
 mod button;
+mod button_group;
 mod paper;
 mod typography;
 
@@ -18,6 +19,8 @@ pub enum DocRoute {
     AppBar,
     #[at("/buttons")]
     Buttons,
+    #[at("/button-group")]
+    ButtonGroup,
     #[at("/paper")]
     Paper,
     #[at("/typography")]
@@ -36,6 +39,7 @@ fn home() -> Html {
         <>
             <DocLink route={DocRoute::AppBar}>{"App Bar"}</DocLink>
             <DocLink route={DocRoute::Buttons}>{"Buttons"}</DocLink>
+            <DocLink route={DocRoute::ButtonGroup}>{"Button Group"}</DocLink>
             <DocLink route={DocRoute::Paper}>{"Paper"}</DocLink>
             <DocLink route={DocRoute::Typography}>{"Typography"}</DocLink>
         </>
@@ -72,6 +76,7 @@ fn documentation() -> Html {
             DocRoute::Home => html! { <Home /> },
             DocRoute::AppBar => html! { <app_bar::Doc /> },
             DocRoute::Buttons => html! { <button::Doc /> },
+            DocRoute::ButtonGroup => html! { <button_group::Doc /> },
             DocRoute::Paper => html! { <paper::Doc /> },
             DocRoute::Typography => html! { <typography::Doc /> },
             DocRoute::NotFound => html! { <NotFound /> },
