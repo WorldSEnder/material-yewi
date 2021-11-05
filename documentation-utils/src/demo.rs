@@ -44,13 +44,14 @@ pub fn demo(props: &DemoProperties) -> Html {
     let wrapper_style = use_style!(/* "demo", */
         display: flex;
         margin: 0 10px;
+        padding-bottom: 20px;
     );
     let frame_sheet = use_theme(|theme| {
         sheet!(
             border: 0;
             flex-grow: 1;
             max-height: 400px;
-            overflow-x: scroll;
+            overflow-y: auto;
             box-shadow: ${&theme.shadows[2]};
             padding: 24px;
             margin: auto;
