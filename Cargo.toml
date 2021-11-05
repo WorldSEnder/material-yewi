@@ -7,10 +7,15 @@ members = [
     "documentation-utils",
 ]
 resolver = "2"
+exclude = [
+    "yew",
+    "yew-feather",
+]
 
 [patch.crates-io]
 yew = { path = "yew/packages/yew" }
 yew-router = { path = "yew/packages/yew-router" }
+yew-feather = { path = "yew-feather" }
 
 [patch."https://github.com/yewstack/yew"]
 yew = { path = "yew/packages/yew" }

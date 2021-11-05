@@ -9,6 +9,7 @@ license = "MIT OR Apache-2.0"
 wee_alloc = "*"
 yew = { version = "^0.18" }
 yew-router = { version = "^0.15" }
+yew-feather = { version = "^0.1" }
 material-styles-yew = { version = "^0.1.0", path = "../material-styles-yew" }
 material-yewi = { version = "^0.1.0", path = "../material-yewi", features = ["default", "router"] }
 material-yewi-documentation-macros = { version = "^0.1.0", path = "../documentation-macros" }
