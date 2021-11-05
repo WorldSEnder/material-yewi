@@ -319,6 +319,7 @@ dependencies = [
  "stylist",
  "wee_alloc",
  "yew",
+ "yew-feather",
  "yew-router",
 ]
 
@@ -762,6 +763,13 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "yew-macro",
+]
+
+[[package]]
+name = "yew-feather"
+version = "0.1.2"
+dependencies = [
+ "yew",
 ]
 
 [[package]]

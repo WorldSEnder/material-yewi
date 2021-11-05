@@ -4,6 +4,7 @@ use material_yewi::toolbar::Toolbar;
 use material_yewi::typography::{Typography, TypographyVariant};
 use stylist::ast::sheet;
 use yew::{html, Html};
+use yew_feather::menu::Menu;
 
 pub fn render() -> Html {
     html! {
@@ -11,7 +12,7 @@ pub fn render() -> Html {
         <AppBar position={AppBarPosition::Static}>
             <Toolbar>
                 <Button color={ButtonColor::Inherit}>
-                    {"Home"}
+                    <Menu />
                 </Button>
                 <Typography class={sheet!(flex-grow: 1;)} variant={TypographyVariant::H6}>
                     {"News"}
