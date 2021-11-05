@@ -92,6 +92,14 @@ fn documentation() -> Html {
                 body {
                     font-family: Roboto, serif;
                 }
+                // See https://stackoverflow.com/questions/4192277/
+                // Disables scroll-x on mobile devices. Might regret this later
+                html, body {
+                    overflow-x: hidden;
+                }
+                body {
+                    position: relative;
+                }
             )} />
             {page_header()}
             <DocRouter render={Router::render(switch)} />
