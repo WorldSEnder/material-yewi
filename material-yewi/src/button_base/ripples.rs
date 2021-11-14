@@ -222,7 +222,7 @@ pub fn ripples(props: &RipplesProp) -> Html {
                 gloo::timers::callback::Timeout::new(550, move || {
                     ripples_capture.dispatch(Box::new(move |v| {
                         if let Some(p) = v.iter().position(|v| v.0 == ripple_id) {
-                            v.swap_remove(p);
+                            v.remove(p);
                         }
                     }));
                 })
