@@ -509,7 +509,7 @@ checksum = "c307a32c1c5c437f38c7fd45d753050587732ba8628319fbdf12a7e289ccc590"
 [[package]]
 name = "stylist"
 version = "0.10.0"
-source = "git+https://github.com/worldsender/stylist.git#a94e2347ad1c7c1540a5ae61265edec6bd6548f5"
+source = "git+https://github.com/futursolo/stylist-rs.git#ec988d8d11e7932bd7111dac0e71f7c53212c05a"
 dependencies = [
  "once_cell",
  "stylist-core",
@@ -522,7 +522,7 @@ dependencies = [
 [[package]]
 name = "stylist-core"
 version = "0.10.0"
-source = "git+https://github.com/worldsender/stylist.git#a94e2347ad1c7c1540a5ae61265edec6bd6548f5"
+source = "git+https://github.com/futursolo/stylist-rs.git#ec988d8d11e7932bd7111dac0e71f7c53212c05a"
 dependencies = [
  "nom",
  "once_cell",
@@ -533,7 +533,7 @@ dependencies = [
 [[package]]
 name = "stylist-macros"
 version = "0.10.0"
-source = "git+https://github.com/worldsender/stylist.git#a94e2347ad1c7c1540a5ae61265edec6bd6548f5"
+source = "git+https://github.com/futursolo/stylist-rs.git#ec988d8d11e7932bd7111dac0e71f7c53212c05a"
 dependencies = [
  "itertools",
  "litrs",
@@ -751,6 +751,7 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 [[package]]
 name = "yew"
 version = "0.18.0"
+source = "git+https://github.com/futursolo/yew.git?rev=98821c4018b524e439bdf9b05e2f8372e37ef1bd#98821c4018b524e439bdf9b05e2f8372e37ef1bd"
 dependencies = [
  "anyhow",
  "console_error_panic_hook",
@@ -768,6 +769,7 @@ dependencies = [
 [[package]]
 name = "yew-feather"
 version = "0.1.2"
+source = "git+https://github.com/WorldSEnder/yew-feather.git?rev=cfb8daa533004cd352c0c1900a7fd77ac5c1f346#cfb8daa533004cd352c0c1900a7fd77ac5c1f346"
 dependencies = [
  "yew",
 ]
@@ -775,6 +777,7 @@ dependencies = [
 [[package]]
 name = "yew-macro"
 version = "0.18.0"
+source = "git+https://github.com/futursolo/yew.git?rev=98821c4018b524e439bdf9b05e2f8372e37ef1bd#98821c4018b524e439bdf9b05e2f8372e37ef1bd"
 dependencies = [
  "boolinator",
  "lazy_static",
@@ -786,6 +789,7 @@ dependencies = [
 [[package]]
 name = "yew-router"
 version = "0.15.0"
+source = "git+https://github.com/futursolo/yew.git?rev=98821c4018b524e439bdf9b05e2f8372e37ef1bd#98821c4018b524e439bdf9b05e2f8372e37ef1bd"
 dependencies = [
  "gloo",
  "js-sys",
@@ -801,6 +805,7 @@ dependencies = [
 [[package]]
 name = "yew-router-macro"
 version = "0.15.0"
+source = "git+https://github.com/futursolo/yew.git?rev=98821c4018b524e439bdf9b05e2f8372e37ef1bd#98821c4018b524e439bdf9b05e2f8372e37ef1bd"
 dependencies = [
  "proc-macro2",
  "quote",
