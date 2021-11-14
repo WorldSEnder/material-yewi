@@ -1,0 +1,39 @@
+[env]
+CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
+
+[config]
+default_to_workspace = false
+
+[tasks.serve-debug]
+private = true
+script = "trunk --config documentation/Trunk.toml serve"
+
+[tasks.serve-release]
+private = true
+dependencies = ["build-deploy"]
+condition = { fail_message = "'serve' not installed. 'go get github.com/rgithub.com/rhardih/serve'" }
+condition_script = ["serve --version"]
+script = '''
+cd dist
+serve -g -p 8080
+'''
+
+[tasks.serve]
+run_task = [
+    { name = "serve-debug", condition = { profiles = ["development"] } },
+    { name = "serve-release", condition = { profiles = ["production"] } }
+]
+
+[tasks.build-deploy]
+script = '''
+trunk --config documentation/Trunk.release.toml build
+# Print quick overview of the expected sizes
+ls -AshS1F dist
+#  -A: all except . and ..
+#  -s: print sizes
+#  -h: human readable sizes
+#  -S: sort by size descending
+#  -1: single column
+#  -F: classify file type
+'''
+env = { "RUSTFLAGS"="--remap-path-prefix=$HOME/.cargo=[crates.io] --remap-path-prefix=$(pwd)=[crate-root]" }
