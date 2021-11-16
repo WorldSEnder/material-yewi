@@ -60,6 +60,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "convert_case"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6245d59a3e82a7fc217c5828a6692dbc6dfb63a0c8c90495621f7b9d79704a0e"
+
+[[package]]
 name = "dependent-map"
 version = "0.1.0"
 source = "git+https://github.com/WorldSEnder/dependent-map-rs.git#82fb60a405d8a6af4d0376b97a1a76c4657293d2"
@@ -769,8 +775,10 @@ dependencies = [
 [[package]]
 name = "yew-feather"
 version = "0.1.2"
-source = "git+https://github.com/WorldSEnder/yew-feather.git?rev=cfb8daa533004cd352c0c1900a7fd77ac5c1f346#cfb8daa533004cd352c0c1900a7fd77ac5c1f346"
+source = "git+https://github.com/WorldSEnder/yew-feather.git?rev=430ee54cf81b10aff11d3f38cf3bd0d214194faf#430ee54cf81b10aff11d3f38cf3bd0d214194faf"
 dependencies = [
+ "convert_case",
+ "serde_json",
  "yew",
 ]
 
