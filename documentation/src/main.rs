@@ -62,12 +62,12 @@ fn documentation() -> Html {
         let title = "Material Yewi";
         let caption = "Beautifully styled components in Yew";
         html! {
-            <>
-                <AppBar position={AppBarPosition::Static} color={AppBarColor::Transparent}><Toolbar>
+            <AppBar position={AppBarPosition::Static} color={AppBarColor::Transparent}>
+                <Toolbar>
                     <DocLink route={DocRoute::Home} variant={TypographyVariant::H1}>{title}</DocLink>
                     <Typography variant={TypographyVariant::Caption}>{caption}</Typography>
-                </Toolbar></AppBar>
-            </>
+                </Toolbar>
+            </AppBar>
         }
     };
 
