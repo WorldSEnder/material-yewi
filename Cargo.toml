@@ -7,14 +7,10 @@ members = [
     "documentation-utils",
 ]
 resolver = "2"
-exclude = [
-    "yew",
-    "yew-feather",
-]
 
 [patch.crates-io.yew-feather]
 git = "https://github.com/WorldSEnder/yew-feather.git"
-rev = "cfb8daa533004cd352c0c1900a7fd77ac5c1f346"
+rev = "430ee54cf81b10aff11d3f38cf3bd0d214194faf"
 
 [patch.crates-io.yew]
 git = "https://github.com/futursolo/yew.git"
@@ -32,8 +28,8 @@ rev = "98821c4018b524e439bdf9b05e2f8372e37ef1bd"
 
 [profile.release]
 # less code to include into binary
-panic = 'abort' 
+panic = 'abort'
 # optimization over all codebase ( better optimization, slower build )
-codegen-units = 1 
+codegen-units = 1
 # link time optimization using using whole-program analysis
 lto = true
