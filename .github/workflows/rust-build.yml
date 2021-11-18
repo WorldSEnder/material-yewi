@@ -69,7 +69,10 @@ jobs:
       - name: Build release
         run: cargo make build-deploy
         env:
-          TRUNK_BUILD_PUBLIC_URL: "/material-yewi/"
+          # For pull requests, use default public url because it will be
+          # deployed on the root path.
+          # For full builds, deploy under /material-yewi/
+          TRUNK_BUILD_PUBLIC_URL: "${{github.event_name == 'push' && '/material-yewi/' || '/'}}"
 
       - name: Upload dist artifacts
         uses: actions/upload-artifact@v2
@@ -78,10 +81,9 @@ jobs:
           path: dist
 
   deploy:
-    name: Deploy to gh-pages
+    name: Deploy
     runs-on: ubuntu-latest
     needs: build-deploy
-    if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
@@ -89,8 +91,9 @@ jobs:
           name: distribution
           path: dist
 
-      - name: Deploy
+      - name: Deploy to Github pages
         uses: s0/git-publish-subdir-action@v2.4.0
+        if: github.event_name == 'push'
         env:
           REPO: self
           BRANCH: gh-pages
@@ -98,3 +101,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SQUASH_HISTORY: true
           MESSAGE: "update demo to {long-sha}:\n\n{msg}"
+
+      - name: Deploy to netlify
+        uses: nwtgck/actions-netlify@v1.2
+        if: github.event_name == 'pull_request'
+        with:
+          publish-dir: "./dist"
+          deploy-message: "Deploy PR from Github Actions: ${{ github.event.pull_request.title }}"
+          enable-commit-comment: true
+          alias: "pr-${{ github.event.pull_request.number }}"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
