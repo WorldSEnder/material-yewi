@@ -2,10 +2,12 @@ use dependent_map::{DebugEntry, DynClone, DynPartialEq, HashableAny};
 use std::convert::TryInto;
 use std::fmt::{Debug, Display};
 use std::hash::Hasher;
+use std::marker::PhantomData;
 use std::ops::Deref;
 use std::rc::Rc;
 use stylist::ast::Sheet;
-use yew::use_context;
+use yew::functional::Hook;
+use yew::{use_context, use_memo, HookContext};
 
 mod color;
 pub use color::*;
@@ -402,32 +404,35 @@ impl PartialEq for Theme {
 
 pub type ThemeProvider = yew::ContextProvider<Theme>;
 
-fn use_memo<Args: 'static, F, R: 'static>(arguments: Args, f: F) -> impl Deref<Target = R>
-where
-    Args: Clone + PartialEq,
-    F: Fn(Args) -> R,
-{
-    struct Storage<Args, R>(Option<(Args, Rc<R>)>);
-    yew::functional::use_hook(
-        || Storage(None),
-        |state, _| match &state.0 {
-            Some(s) if s.0 == arguments => Rc::clone(&s.1),
-            _ => {
-                let new_result = Rc::new(f(arguments.clone()));
-                state.0 = Some((arguments, new_result.clone()));
-                new_result
-            }
-        },
-        |_| {},
-    )
+pub struct StyleContainer<R> {
+    styles: Rc<R>,
+}
+
+impl<R> Deref for StyleContainer<R> {
+    type Target = R;
+    fn deref(&self) -> &Self::Target {
+        &self.styles
+    }
 }
 
 // FIXME: the way we use this for theme derivations, this should not memo per component,
 // but memo per theme. Theme incidentially internally keeps a Rc to the actual theme contents,
 // so we could use a map from Weak<ThemeContent> to derived styles.
 pub fn use_theme<R: 'static>(
-    theme_to_styles: impl 'static + Fn(Theme) -> R,
-) -> impl Deref<Target = R> {
-    let theme = use_context::<Theme>().unwrap_or_default();
-    use_memo(theme, theme_to_styles)
+    theme_to_styles: impl 'static + Fn(&Theme) -> R,
+) -> impl Hook<Output = StyleContainer<R>> {
+    struct TheHook<R, F>(PhantomData<R>, F);
+    impl<R, F> Hook for TheHook<R, F>
+    where
+        R: 'static,
+        F: 'static + Fn(&Theme) -> R,
+    {
+        type Output = StyleContainer<R>;
+        fn run(self, ctx: &mut HookContext) -> Self::Output {
+            let theme = use_context::<Theme>().run(ctx).unwrap_or_default();
+            let styles = use_memo(self.1, theme).run(ctx);
+            StyleContainer { styles }
+        }
+    }
+    TheHook(PhantomData, theme_to_styles)
 }

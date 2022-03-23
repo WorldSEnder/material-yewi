@@ -9,7 +9,7 @@ use web_sys::Node;
 use web_sys::VisibilityState;
 use web_sys::{HtmlElement, HtmlInputElement, HtmlTextAreaElement};
 use yew::use_effect_with_deps;
-use yew::use_ref;
+use yew::use_mut_ref;
 use yew::Callback;
 use yew::FocusEvent;
 use yew::NodeRef;
@@ -199,8 +199,9 @@ fn setup(handle: DocumentHandle, node: Node) -> impl FnOnce() {
     move || {}
 }
 
-pub fn use_focus_visible(node: NodeRef) -> FocusVisibleHandle {
-    let is_visible = use_ref(|| false);
+#[yew::hook]
+pub fn use_focus_visible(node: &NodeRef) -> FocusVisibleHandle {
+    let is_visible = use_mut_ref(|| false);
     let doc_handle = DocumentHandle(Rc::default());
 
     let doc_handle_capture = doc_handle.clone();
@@ -213,7 +214,7 @@ pub fn use_focus_visible(node: NodeRef) -> FocusVisibleHandle {
                 }
             }
         },
-        node,
+        node.clone(),
     );
 
     let is_visible_capture_focus = is_visible.clone();

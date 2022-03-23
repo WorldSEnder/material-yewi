@@ -4,6 +4,7 @@ use stylist::{
     ast::{sheet, ScopeContent, Sheet},
     yew::use_style,
 };
+use yew::Html;
 use yew::{classes, function_component, html, html_nested, ChildrenWithProps, Properties};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -63,7 +64,7 @@ struct DefaultStyles {
     root_override: Sheet,
 }
 
-fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
+fn derive_styles_from_theme(theme: &Theme) -> DefaultStyles {
     let gray_400: CssColor = CssColor::rgb(0xbd, 0xbd, 0xbd);
 
     let root_inline = sheet!(
@@ -245,8 +246,8 @@ impl DefaultStyles {
     }
 }
 
-#[function_component(ButtonGroup)]
-pub fn button_group(props: &ButtonGroupProperties) -> Html {
+#[function_component]
+pub fn ButtonGroup(props: &ButtonGroupProperties) -> Html {
     let styles = use_theme(derive_styles_from_theme);
 
     let mut root_style = styles.build_root_style(props);

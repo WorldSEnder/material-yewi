@@ -3,7 +3,7 @@ use material_yewi::link::Link;
 use material_yewi::toolbar::Toolbar;
 use material_yewi::typography::{Typography, TypographyVariant};
 use yew::prelude::*;
-use yew_router::{Routable, Router};
+use yew_router::{BrowserRouter, Routable, Switch};
 
 mod app_bar;
 mod button;
@@ -30,11 +30,11 @@ pub enum DocRoute {
     NotFound,
 }
 
-type DocRouter = Router<DocRoute>;
+type DocSwitch = Switch<DocRoute>;
 type DocLink = Link<DocRoute>;
 
-#[function_component(Home)]
-fn home() -> Html {
+#[function_component]
+fn Home() -> Html {
     html! {
         <>
             <DocLink route={DocRoute::AppBar}>{"App Bar"}</DocLink>
@@ -46,8 +46,8 @@ fn home() -> Html {
     }
 }
 
-#[function_component(NotFound)]
-fn not_found() -> Html {
+#[function_component]
+fn NotFound() -> Html {
     html! {
         <>
             <Typography variant={TypographyVariant::Body2}>{"The page you were searching for could not be found."}</Typography>
@@ -56,8 +56,8 @@ fn not_found() -> Html {
     }
 }
 
-#[function_component(Docs)]
-fn documentation() -> Html {
+#[function_component]
+fn Docs() -> Html {
     let page_header = || {
         let title = "Material Yewi";
         let caption = "Beautifully styled components in Yew";
@@ -83,7 +83,7 @@ fn documentation() -> Html {
         }
     }
     html! {
-        <>
+        <BrowserRouter>
             <stylist::yew::Global css={stylist::css!(
                 * {
                     padding: 0;
@@ -102,8 +102,8 @@ fn documentation() -> Html {
                 }
             )} />
             {page_header()}
-            <DocRouter render={Router::render(switch)} />
-        </>
+            <DocSwitch render={Switch::render(switch)} />
+        </BrowserRouter>
     }
 }
 
@@ -111,5 +111,5 @@ fn documentation() -> Html {
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 fn main() {
-    yew::start_app::<Docs>();
+    yew::Renderer::<Docs>::new().render();
 }

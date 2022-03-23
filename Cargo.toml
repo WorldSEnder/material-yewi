@@ -8,23 +8,18 @@ members = [
 ]
 resolver = "2"
 
-[patch.crates-io.yew-feather]
-git = "https://github.com/WorldSEnder/yew-feather.git"
-rev = "430ee54cf81b10aff11d3f38cf3bd0d214194faf"
-
 [patch.crates-io.yew]
-git = "https://github.com/futursolo/yew.git"
-rev = "98821c4018b524e439bdf9b05e2f8372e37ef1bd"
+git = "https://github.com/worldsender/yew.git"
+rev = "e18db7380942a702d2004844bd650ef1d3162518"
 [patch.crates-io.yew-router]
-git = "https://github.com/futursolo/yew.git"
-rev = "98821c4018b524e439bdf9b05e2f8372e37ef1bd"
-
-[patch."https://github.com/yewstack/yew".yew]
-git = "https://github.com/futursolo/yew.git"
-rev = "98821c4018b524e439bdf9b05e2f8372e37ef1bd"
-[patch."https://github.com/yewstack/yew".yew-router]
-git = "https://github.com/futursolo/yew.git"
-rev = "98821c4018b524e439bdf9b05e2f8372e37ef1bd"
+git = "https://github.com/worldsender/yew.git"
+rev = "e18db7380942a702d2004844bd650ef1d3162518"
+[patch.crates-io.yew-feather]
+git = "https://github.com/pedrodesu/yew-feather.git"
+rev = "8bc1660fc2ff3ccfb264b05f9c5537e998113d8e"
+[patch.crates-io.stylist]
+git = "https://github.com/worldsender/stylist.git"
+rev = "7c5c9d0681ea9da5409fea00ffc52c9cab7914e5"
 
 [profile.release]
 # less code to include into binary

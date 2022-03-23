@@ -5,6 +5,7 @@ use stylist::ast::{sheet, Sheet};
 use yew::function_component;
 use yew::html;
 use yew::Children;
+use yew::Html;
 use yew::Properties;
 
 use crate::paper::Paper;
@@ -80,7 +81,7 @@ struct DefaultStyles {
     root_override: Sheet,
 }
 
-fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
+fn derive_styles_from_theme(theme: &Theme) -> DefaultStyles {
     let root_style = sheet!(
         display: flex;
         flex-direction: column;
@@ -183,8 +184,8 @@ impl DefaultStyles {
     }
 }
 
-#[function_component(AppBar)]
-pub fn app_bar(props: &AppBarProperties) -> Html {
+#[function_component]
+pub fn AppBar(props: &AppBarProperties) -> Html {
     let styles = use_theme(derive_styles_from_theme);
 
     let mut root_style = styles.build_root_style(props);

@@ -9,19 +9,18 @@ categories = ["gui", "web-programming", "wasm"]
 description = "Generic styling solution for yew components"
 
 [dev-dependencies]
-yew = "^0.18.0"
-log = "^0.4"
-wasm-bindgen-test = "^0.3.9"
-wasm-logger = "^0.2"
-web-sys = "^0.3.53"
+yew = "0.19"
+log = "0.4"
+wasm-bindgen-test = "0.3.9"
+wasm-logger = "0.2"
+web-sys = "0.3.55"
 
 [dependencies]
-yew = "^0.18"
+yew = "0.19"
 dependent-map = { git = "https://github.com/WorldSEnder/dependent-map-rs.git" }
-lazy_static = "^1.4.0"
+lazy_static = "1.4.0"
 
 [dependencies.stylist]
 version = "^0.10.0"
-git = "https://github.com/futursolo/stylist-rs.git"
 default-features = false
 features = ["macros"]

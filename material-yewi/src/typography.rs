@@ -6,6 +6,7 @@ use yew::classes;
 use yew::function_component;
 use yew::html;
 use yew::Children;
+use yew::Html;
 use yew::Properties;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -157,7 +158,7 @@ impl DefaultStyles {
     }
 }
 
-fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
+fn derive_styles_from_theme(theme: &Theme) -> DefaultStyles {
     let root = sheet!(margin: 0;);
     let screen_reader = sheet!(
         position: absolute;
@@ -227,8 +228,8 @@ fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
     }
 }
 
-#[function_component(Typography)]
-pub fn typography(props: &TypographyProperties) -> Html {
+#[function_component]
+pub fn Typography(props: &TypographyProperties) -> Html {
     let styles = use_theme(derive_styles_from_theme);
 
     let component = variant_to_element(props.variant);

@@ -7,6 +7,7 @@ use yew::classes;
 use yew::function_component;
 use yew::html;
 use yew::Children;
+use yew::Html;
 use yew::Properties;
 use yew_router::components::Link as RawLink;
 use yew_router::Routable;
@@ -56,7 +57,7 @@ struct DefaultStyles {
     root_override: Sheet,
 }
 
-fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
+fn derive_styles_from_theme(theme: &Theme) -> DefaultStyles {
     // TODO: add color options
     let color = theme.palette.text.primary;
 
@@ -108,8 +109,11 @@ impl DefaultStyles {
     }
 }
 
-#[function_component(Link)]
-pub fn link<R: Routable + Clone + PartialEq + 'static>(props: &LinkProperties<R>) -> Html {
+#[function_component]
+pub fn Link<R>(props: &LinkProperties<R>) -> Html
+where
+    R: Routable + Clone + PartialEq + 'static,
+{
     let styles = use_theme(derive_styles_from_theme);
 
     let mut root_style = styles.build_root_style(props);
@@ -118,7 +122,7 @@ pub fn link<R: Routable + Clone + PartialEq + 'static>(props: &LinkProperties<R>
     let root_style = use_style(/* "Mwi-link-root", */ root_style);
 
     html! {
-        <RawLink<R> route={props.route.clone()} classes={classes![root_style]}>
+        <RawLink<R> to={props.route.clone()} classes={classes![root_style]}>
             <Typography variant={props.variant}>
                 {for props.children.iter()}
             </Typography>

@@ -62,8 +62,8 @@ struct WrapperProps {
     children: Children,
 }
 
-#[function_component(TypographyListing)]
-fn typography_listing(props: &WrapperProps) -> Html {
+#[function_component]
+fn TypographyListing(props: &WrapperProps) -> Html {
     // A small utility component for documentation, renders as div
     let wrapper_class = stylist::yew::use_style!(/* "typography-listing", */
         max-width: 500px;

@@ -3,6 +3,7 @@ use stylist::ast::{sheet, Sheet};
 use stylist::yew::use_style;
 use yew::function_component;
 use yew::html;
+use yew::Html;
 use yew::Properties;
 
 use super::ripples::{KEYFRAMES_ENTER_NAME, KEYFRAMES_EXIT_NAME, KEYFRAMES_PULSATE_NAME};
@@ -29,7 +30,7 @@ struct ThemeStyles {
     root: Sheet,
 }
 
-fn derive_ripple_styles_from_theme(theme: Theme) -> ThemeStyles {
+fn derive_ripple_styles_from_theme(theme: &Theme) -> ThemeStyles {
     // FIXME: push into theme
     let ease_in_out = "cubic-bezier(0.4, 0, 0.2, 1)";
     const DURATION: &str = "550ms";
@@ -105,8 +106,8 @@ pub struct RippleProps {
     pub is_pulsating: bool,
 }
 
-#[function_component(Ripple)]
-pub fn ripple(props: &RippleProps) -> Html {
+#[function_component]
+pub fn Ripple(props: &RippleProps) -> Html {
     let styles = use_theme(derive_ripple_styles_from_theme);
     let root_class = use_style(/* "Mwi-ripple", */ styles.root.clone());
 

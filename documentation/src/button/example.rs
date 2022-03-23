@@ -36,8 +36,8 @@ struct WrapperProps {
     children: Children,
 }
 
-#[function_component(ButtonRow)]
-fn button_row(props: &WrapperProps) -> Html {
+#[function_component]
+fn ButtonRow(props: &WrapperProps) -> Html {
     // A Small utility component for documentation, with some extra visual styling
     let wrapper_class = stylist::yew::use_style!(
         & > button { margin: 8px; }

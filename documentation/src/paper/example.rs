@@ -34,8 +34,8 @@ struct WrapperProps {
     children: Children,
 }
 
-#[function_component(PaperListing)]
-fn paper_listing(props: &WrapperProps) -> Html {
+#[function_component]
+fn PaperListing(props: &WrapperProps) -> Html {
     // A small utility component for documentation, renders as div
     let wrapper_class = stylist::yew::use_style!(/* "paper-listing", */
         max-width: 500px;

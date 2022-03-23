@@ -7,13 +7,13 @@ use yew::classes;
 use yew::function_component;
 use yew::html;
 use yew::use_effect_with_deps;
-use yew::use_ref;
+use yew::use_node_ref;
 use yew::use_state;
 use yew::Callback;
 use yew::Children;
+use yew::Html;
 use yew::KeyboardEvent;
 use yew::MouseEvent;
-use yew::NodeRef;
 use yew::Properties;
 use yew::TouchEvent;
 
@@ -75,7 +75,7 @@ struct ThemeStyles {
     root: Sheet,
 }
 
-fn derive_styles_from_theme(theme: Theme) -> ThemeStyles {
+fn derive_styles_from_theme(theme: &Theme) -> ThemeStyles {
     let root_default = sheet!(
         display: inline-flex;
         align-items: center;
@@ -148,7 +148,7 @@ impl<Arg> RippleHandleAction<Arg> for RippleActionStop {
     }
 }
 
-fn use_handle<Arg: 'static, Action: RippleHandleAction<Arg>>(
+fn link_handle<Arg: 'static, Action: RippleHandleAction<Arg>>(
     handle: &ImperativeRef<RipplesHandle>,
     _action: Action,
     event_callback: impl 'static + Fn(&Arg),
@@ -164,23 +164,23 @@ fn use_handle<Arg: 'static, Action: RippleHandleAction<Arg>>(
     })
 }
 
-#[function_component(ButtonBase)]
-pub fn button_base(props: &ButtonBaseProperties) -> Html {
+#[function_component]
+pub fn ButtonBase(props: &ButtonBaseProperties) -> Html {
     let styles = use_theme(derive_styles_from_theme);
     let mut root_sheet = vec![];
     root_sheet.extend_from_slice(&styles.root);
     root_sheet.extend_from_slice(&props.class);
     let root_style = use_style(/* "Mwi-button-base" */ Sheet::from(root_sheet));
 
-    let button_ref = use_ref(NodeRef::default);
-    let ripples_handle = use_ref(ImperativeRef::<RipplesHandle>::new);
+    let button_ref = use_node_ref();
+    let ripples_handle = use_state(ImperativeRef::<RipplesHandle>::new);
 
     let FocusVisibleHandle {
         // This focus_visible provides tracking, but is not our source of truth
         is_visible: tracked_focus_visible,
         onblur: handle_blur_visible,
         onfocus: handle_focus_visible,
-    } = use_focus_visible(button_ref.borrow().clone());
+    } = use_focus_visible(&button_ref);
     let focus_visible = use_state(|| false);
 
     if props.disabled {
@@ -191,7 +191,7 @@ pub fn button_base(props: &ButtonBaseProperties) -> Html {
     use_effect_with_deps(
         move |focus_visible| {
             if *focus_visible {
-                if let Some(h) = (*ripples_handle_capture.borrow()).get().as_deref() {
+                if let Some(h) = ripples_handle_capture.get().as_deref() {
                     h.start.emit(RippleStartReason::FocusVisible);
                 }
             }
@@ -200,74 +200,66 @@ pub fn button_base(props: &ButtonBaseProperties) -> Html {
         *focus_visible,
     );
 
-    let handle_click = props.on_pressed.reform(ButtonPressedEvent::MousePress);
+    let onclick = props.on_pressed.reform(ButtonPressedEvent::MousePress);
 
-    let handle_mouse_down = use_handle(&*ripples_handle.borrow(), RippleActionStart, |_| {});
-    let handle_touch_start = use_handle(&*ripples_handle.borrow(), RippleActionStart, |_| {});
+    let onmousedown = link_handle(&ripples_handle, RippleActionStart, |_| {});
+    let ontouchstart = link_handle(&ripples_handle, RippleActionStart, |_| {});
 
     // TODO: figure out why we'd need that
-    // let handle_drag_leave = use_handle(&*ripples_handle.borrow(), RippleActionStop, |_| {});
-    let handle_context_menu = use_handle(&*ripples_handle.borrow(), RippleActionStop, |_| {});
-    let handle_mouse_up = use_handle(&*ripples_handle.borrow(), RippleActionStop, |_| {});
+    // let ondragleave = use_handle(&*ripples_handle.borrow(), RippleActionStop, |_| {});
+    let oncontextmenu = link_handle(&ripples_handle, RippleActionStop, |_| {});
+    let onmouseup = link_handle(&ripples_handle, RippleActionStop, |_| {});
     let focus_visible_capture = focus_visible.clone();
-    let handle_mouse_out = use_handle(
-        &*ripples_handle.borrow(),
-        RippleActionStop,
-        move |ev: &MouseEvent| {
-            if *focus_visible_capture {
-                ev.prevent_default();
-            }
-        },
-    );
-    let handle_touch_end = use_handle(&*ripples_handle.borrow(), RippleActionStop, |_| {});
-    let handle_touch_move = use_handle(&*ripples_handle.borrow(), RippleActionStop, |_| {});
+    let onmouseout = link_handle(&ripples_handle, RippleActionStop, move |ev: &MouseEvent| {
+        if *focus_visible_capture {
+            ev.prevent_default();
+        }
+    });
+    let ontouchend = link_handle(&ripples_handle, RippleActionStop, |_| {});
+    let ontouchmove = link_handle(&ripples_handle, RippleActionStop, |_| {});
 
     let focus_visible_capture = focus_visible.clone();
     let tracked_focus_visible_capture = tracked_focus_visible.clone();
-    let handle_blur = use_handle(
-        &*ripples_handle.borrow(),
-        RippleActionStop,
-        move |ev: &FocusEvent| {
-            handle_blur_visible.emit(ev.clone());
-            focus_visible_capture.relaxed_set(*tracked_focus_visible_capture.borrow());
-        },
-    );
+    let onfocusout = link_handle(&ripples_handle, RippleActionStop, move |ev: &FocusEvent| {
+        handle_blur_visible.emit(ev.clone());
+        focus_visible_capture.relaxed_set(*tracked_focus_visible_capture.borrow());
+    });
     let focus_visible_capture = focus_visible.clone();
     let tracked_focus_visible_capture = tracked_focus_visible;
     // TODO: replace with use_memo?
-    let handle_focus = use_state(|| {
+    let onfocusin = (*use_state(|| {
         Callback::from(move |ev: FocusEvent| {
             handle_focus_visible.emit(ev);
             focus_visible_capture.relaxed_set(*tracked_focus_visible_capture.borrow());
         })
-    });
-    // TODO: handleKeyDown
-    // TODO: handleKeyUp
+    }))
+    .clone();
+    // TODO: onkeydown
+    // TODO: onkeyup
 
     let classes = classes![
         root_style,
         props.disabled.then(|| CLASS_DISABLED),
         focus_visible.then(|| CLASS_FOCUS_VISIBLE),
     ];
-    let button_ref = button_ref.borrow().clone();
-    let ripples_handle = ripples_handle.borrow().clone();
+    let ripples_handle = (*ripples_handle).clone();
     html! {
         <button
-            ref={button_ref}
+            ref={&button_ref}
             class={classes}
-            onfocusout={handle_blur}
-            onclick={handle_click}
-            oncontextmenu={handle_context_menu}
-            onfocusin={(*handle_focus).clone()}
-            // onkeydown={handle_key_down}
-            // onkeyup={handle_key_up}
-            onmousedown={handle_mouse_down}
-            onmouseout={handle_mouse_out}
-            onmouseup={handle_mouse_up}
-            // ondragleave={handle_drag_leave}
-            ontouchend={handle_touch_end}
-            ontouchmove={handle_touch_move}
-            ontouchstart={handle_touch_start}
+            {onfocusout}
+            {onclick}
+            {oncontextmenu}
+            {onfocusin}
+            // {onkeydown}
+            // {onkeyup}
+            {onmousedown}
+            {onmouseout}
+            {onmouseup}
+            // {ondragleave}
+            {ontouchend}
+            {ontouchmove}
+            {ontouchstart}
             tabindex={(if props.disabled { -1 } else { props.tab_index }).to_string()}
         >
             { for props.children.iter() }

@@ -49,8 +49,8 @@ struct WrapperProps {
     children: Children,
 }
 
-#[function_component(ButtonGroupAssortment)]
-fn assortment(props: &WrapperProps) -> Html {
+#[function_component]
+fn ButtonGroupAssortment(props: &WrapperProps) -> Html {
     // A Small utility component for documentation, with some extra visual styling
     let wrapper_class = stylist::yew::use_style!(
         & > * { margin: 8px; }

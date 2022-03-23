@@ -7,6 +7,7 @@ use yew::classes;
 use yew::function_component;
 use yew::html;
 use yew::Children;
+use yew::Html;
 use yew::Properties;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -64,7 +65,7 @@ struct DefaultStyles {
     root_override: Sheet,
 }
 
-fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
+fn derive_styles_from_theme(theme: &Theme) -> DefaultStyles {
     let root_style = sheet!(
         position: relative;
         display: flex;
@@ -131,8 +132,8 @@ impl DefaultStyles {
     }
 }
 
-#[function_component(Toolbar)]
-pub fn toolbar(props: &ToolbarProperties) -> Html {
+#[function_component]
+pub fn Toolbar(props: &ToolbarProperties) -> Html {
     let styles = use_theme(derive_styles_from_theme);
 
     let mut root_style = styles.build_root_style(props);

@@ -1,5 +1,6 @@
 use std::rc::Rc;
 
+use gloo::timers::callback::Timeout;
 use lazy_static::lazy_static;
 use material_styles_yew::use_theme;
 use material_styles_yew::Theme;
@@ -8,12 +9,15 @@ use stylist::yew::{use_style, Global};
 use web_sys::Element;
 use yew::classes;
 use yew::function_component;
+use yew::use_mut_ref;
+use yew::use_node_ref;
 use yew::use_reducer;
-use yew::use_ref;
 use yew::Callback;
+use yew::Html;
 use yew::MouseEvent;
 use yew::NodeRef;
 use yew::Properties;
+use yew::Reducible;
 use yew::TouchEvent;
 use yew::{html, html_nested};
 
@@ -80,7 +84,7 @@ struct ThemeStyles {
     root: Sheet,
 }
 
-fn derive_styles_from_theme(theme: Theme) -> ThemeStyles {
+fn derive_styles_from_theme(theme: &Theme) -> ThemeStyles {
     let root_default = sheet!(
         overflow: hidden;
         pointer-events: none;
@@ -176,21 +180,24 @@ pub struct RipplesProp {
     pub handle: ImperativeRef<RipplesHandle>,
 }
 
-#[function_component(Ripples)]
-pub fn ripples(props: &RipplesProp) -> Html {
+#[function_component]
+pub fn Ripples(props: &RipplesProp) -> Html {
     type RippleEntry = (u32, RippleProps);
 
-    let id_counter = use_ref(|| 0u32);
-    let container = use_ref(NodeRef::default);
-    let ripples = use_reducer(
-        |mut state, act: Box<dyn FnOnce(&mut Vec<RippleEntry>)>| {
-            Rc::make_mut(&mut state);
-            let mut new_state = Rc::try_unwrap(state).expect("just made unique");
-            act(&mut new_state);
-            new_state
-        },
-        vec![],
-    );
+    let id_counter = use_mut_ref(|| 0u32);
+    let container = use_node_ref();
+    #[derive(Default, Clone)]
+    struct RippleState(Vec<RippleEntry>);
+    impl Reducible for RippleState {
+        type Action = Box<dyn FnOnce(&mut Vec<RippleEntry>)>;
+
+        fn reduce(mut self: Rc<Self>, action: Self::Action) -> Rc<Self> {
+            let new_state = Rc::make_mut(&mut self);
+            action(&mut new_state.0);
+            self
+        }
+    }
+    let ripples = use_reducer(RippleState::default);
 
     let container_capture = container.clone();
     let ripples_capture_start = ripples.clone();
@@ -205,7 +212,7 @@ pub fn ripples(props: &RipplesProp) -> Html {
                     *c += 1;
                     *c
                 };
-                let ripple_params = event.to_params(&*container_capture.borrow());
+                let ripple_params = event.to_params(&container_capture);
                 v.push((next_id, ripple_params));
             }));
         }),
@@ -219,7 +226,7 @@ pub fn ripples(props: &RipplesProp) -> Html {
                 };
                 leaving_ripple.1.is_leaving = true;
                 let ripple_id = leaving_ripple.0;
-                gloo::timers::callback::Timeout::new(550, move || {
+                Timeout::new(550, move || {
                     ripples_capture.dispatch(Box::new(move |v| {
                         if let Some(p) = v.iter().position(|v| v.0 == ripple_id) {
                             v.remove(p);
@@ -235,14 +242,13 @@ pub fn ripples(props: &RipplesProp) -> Html {
     let themed = use_theme(derive_styles_from_theme);
     let style = use_style(/* "Mwi-ripple-host", */ themed.root.clone());
 
-    let container = container.borrow().clone();
     html! {
-        <span class={classes![style]} ref={container}>
+        <span class={classes![style]} ref={&container}>
             <Global key="sheet_enter" css={KEYFRAMES_ENTER_SHEET.clone()}/>
             <Global key="sheet_exit" css={KEYFRAMES_EXIT_SHEET.clone()}/>
             <Global key="sheet_pulsate" css={KEYFRAMES_PULSATE_SHEET.clone()}/>
             {
-                for ripples.iter().map(|(k, r)|
+                for ripples.0.iter().map(|(k, r)|
                     html_nested! {
                         <Ripple key={*k} ..r.clone() />
                     }

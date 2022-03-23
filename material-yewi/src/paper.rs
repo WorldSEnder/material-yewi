@@ -8,6 +8,7 @@ use yew::classes;
 use yew::function_component;
 use yew::html;
 use yew::Children;
+use yew::Html;
 use yew::Properties;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -65,7 +66,7 @@ struct DefaultStyles {
     root_override: Sheet,
 }
 
-fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
+fn derive_styles_from_theme(theme: &Theme) -> DefaultStyles {
     // TODO: add color options
     let root_style = sheet!(
         background-color: ${theme.palette.background.paper};
@@ -123,8 +124,8 @@ impl DefaultStyles {
     }
 }
 
-#[function_component(Paper)]
-pub fn paper(props: &PaperProperties) -> Html {
+#[function_component]
+pub fn Paper(props: &PaperProperties) -> Html {
     let styles = use_theme(derive_styles_from_theme);
 
     let mut root_style = styles.build_root_style(props);

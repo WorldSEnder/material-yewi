@@ -23,12 +23,13 @@ fn get_next_style_id() -> u64 {
     *ctr
 }
 
+#[hook]
 fn use_unique_name(suggestion: &'static str) -> UseStateHandle<String> {
     use_state(move || format!("{}-{}", suggestion, get_next_style_id()))
 }
 
-#[function_component(Example)]
-pub fn example(props: &ExampleProps) -> Html {
+#[function_component]
+pub fn Example(props: &ExampleProps) -> Html {
     let tab_styles = use_style!(/* "tab", */
         & {
             display: none;

@@ -6,6 +6,7 @@ use yew::function_component;
 use yew::html;
 use yew::Callback;
 use yew::Children;
+use yew::Html;
 use yew::Properties;
 
 use crate::button_base::ButtonBase;
@@ -118,7 +119,7 @@ struct DefaultStyles {
     root_override: Sheet,
 }
 
-fn derive_styles_from_theme(theme: Theme) -> DefaultStyles {
+fn derive_styles_from_theme(theme: &Theme) -> DefaultStyles {
     // FIXME: push into theme
     let gray_300: CssColor = CssColor::rgb(0xe0, 0xe0, 0xe0);
     let gray_a100: CssColor = CssColor::rgb(0xd5, 0xd5, 0xd5);
@@ -405,8 +406,8 @@ impl DefaultStyles {
     }
 }
 
-#[function_component(Button)]
-pub fn button(props: &ButtonProperties) -> Html {
+#[function_component]
+pub fn Button(props: &ButtonProperties) -> Html {
     let styles = use_theme(derive_styles_from_theme);
 
     let mut root_style = styles.build_root_style(props);
