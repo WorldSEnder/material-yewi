@@ -15,8 +15,8 @@ rev = "e18db7380942a702d2004844bd650ef1d3162518"
 git = "https://github.com/worldsender/yew.git"
 rev = "e18db7380942a702d2004844bd650ef1d3162518"
 [patch.crates-io.yew-feather]
-git = "https://github.com/pedrodesu/yew-feather.git"
-rev = "8bc1660fc2ff3ccfb264b05f9c5537e998113d8e"
+git = "https://github.com/worldsender/yew-feather.git"
+rev = "e8b29d3dcda419794bb557c06dd00a58b4f48ada"
 [patch.crates-io.stylist]
 git = "https://github.com/worldsender/stylist.git"
 rev = "7c5c9d0681ea9da5409fea00ffc52c9cab7914e5"
